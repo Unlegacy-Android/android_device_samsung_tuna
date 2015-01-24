@@ -224,6 +224,10 @@ PRODUCT_PACKAGES += \
 	libI420colorconvert \
 	libtiutils_custom
 
+# DCC
+PRODUCT_PACKAGES += \
+    dumpdcc
+
 $(call inherit-product, frameworks/native/build/phone-xhdpi-1024-dalvik-heap.mk)
 
 $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4330/device-bcm.mk)

@@ -27,7 +27,7 @@ LOCAL_SHARED_LIBRARIES := liblog libcutils libtinyalsa libaudioutils libdl
 LOCAL_MODULE_TAGS := optional
 
 # Comment to disable out stream resampler.
-LOCAL_CFLAGS += -DOUT_RESAMPLER
+#LOCAL_CFLAGS += -DOUT_RESAMPLER
 
 include $(BUILD_SHARED_LIBRARY)
 

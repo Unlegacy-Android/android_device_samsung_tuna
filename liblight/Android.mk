@@ -28,4 +28,8 @@ LOCAL_MODULE := lights.tuna
 
 LOCAL_MODULE_TAGS := optional
 
+ifeq ($(TARGET_USE_CHARGING_LED),true)
+	LOCAL_CFLAGS += -DCHARGING_LED
+endif
+
 include $(BUILD_SHARED_LIBRARY)

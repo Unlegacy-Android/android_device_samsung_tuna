@@ -30,4 +30,8 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../kernel-headers
 
 LOCAL_MODULE_TAGS := optional
 
+ifeq ($(TARGET_USE_CHARGING_LED),true)
+	LOCAL_CFLAGS += -DCHARGING_LED
+endif
+
 include $(BUILD_SHARED_LIBRARY)

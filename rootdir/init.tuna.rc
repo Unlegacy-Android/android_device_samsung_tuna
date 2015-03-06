@@ -50,6 +50,10 @@ on post-fs-data
     chmod 0660 /sys/devices/tuna_otg/uart_sel
     chmod 0660 /sys/devices/tuna_otg/usb_sel
 
+on early-boot
+	# set RLIMIT_MEMLOCK to 64MB
+	setrlimit 8 67108864 67108864
+
 on boot
 	mount debugfs /sys/kernel/debug /sys/kernel/debug
 	chmod 0666 /dev/pvrsrvkm

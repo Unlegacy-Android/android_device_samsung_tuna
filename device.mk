@@ -56,20 +56,28 @@ PRODUCT_PACKAGES += \
 	audio.usb.default \
 	audio.r_submix.default
 
-# Symlinks
-PRODUCT_PACKAGES += \
-	libion.so
+ifeq ($(TARGET_TUNA_AUDIO_HDMI),true)
+PRODUCT_COPY_FILES += \
+	$(DEVICE_FOLDER)/audio/policy/audio_policy.hdmi.conf:system/etc/audio_policy.conf
+else
+PRODUCT_COPY_FILES += \
+	$(DEVICE_FOLDER)/audio/policy/audio_policy.default.conf:system/etc/audio_policy.conf
+endif
 
 PRODUCT_COPY_FILES += \
 	$(DEVICE_FOLDER)/audio/audio_policy.conf:system/etc/audio_policy.conf \
 	$(DEVICE_FOLDER)/audio/audio_effects.conf:system/vendor/etc/audio_effects.conf
 
-PRODUCT_PACKAGES += \
-	tuna_hdcp_keys
-
 # Enable AAC 5.1 output
 PRODUCT_PROPERTY_OVERRIDES += \
 	media.aac_51_output_enabled=true
+
+# Symlinks
+PRODUCT_PACKAGES += \
+	libion.so
+
+PRODUCT_PACKAGES += \
+	tuna_hdcp_keys
 
 #PRODUCT_PACKAGES += \
 #	keystore.tuna
@@ -218,10 +226,10 @@ PRODUCT_PACKAGES += \
 
 # F2FS filesystem
 PRODUCT_PACKAGES += \
-        mkfs.f2fs \
-        fsck.f2fs \
-        fibmap.f2fs \
-        f2fstat
+	mkfs.f2fs \
+	fsck.f2fs \
+	fibmap.f2fs \
+	f2fstat
 
 # DCC
 PRODUCT_PACKAGES += \

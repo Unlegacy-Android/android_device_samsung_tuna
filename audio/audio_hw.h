@@ -448,9 +448,11 @@ struct tuna_stream_out {
     audio_channel_mask_t channel_mask;
     audio_channel_mask_t sup_channel_masks[3];
 
+#ifdef USE_HDMI_AUDIO
     /* FIXME: workaround for HDMI multi channel channel swap on first playback after opening
      * the output stream: force reopening the pcm driver after writing a few periods. */
     int restart_periods_cnt;
+#endif
     bool muted;
 
     struct tuna_audio_device *dev;

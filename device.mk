@@ -80,7 +80,8 @@ PRODUCT_COPY_FILES += \
 
 # Fstab
 PRODUCT_COPY_FILES += \
-	$(DEVICE_FOLDER)/rootdir/fstab.tuna:root/fstab.tuna
+	$(DEVICE_FOLDER)/rootdir/fstab.tuna:root/fstab.tuna \
+	$(DEVICE_FOLDER)/recovery/twrp.fstab:recovery/root/etc/twrp.fstab
 
 # GPS
 PRODUCT_COPY_FILES += \

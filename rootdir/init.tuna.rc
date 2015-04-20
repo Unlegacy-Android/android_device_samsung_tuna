@@ -130,6 +130,9 @@ on fs
 	chmod 0660 /sys/bus/usb/devices/usb1/power/control
 	chown radio radio /sys/bus/usb/devices/usb1/power/control
 
+on charger
+    mount ext4 /dev/block/platform/omap/omap_hsmmc.0/by-name/system /system ro
+
 on property:persist.sys.tuna.off_mode=*
 	write /d/pm_debug/enable_off_mode ${persist.sys.tuna.off_mode}
 

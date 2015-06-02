@@ -40,6 +40,10 @@ PRODUCT_PACKAGES += \
 	power.tuna \
 	audio.primary.tuna
 
+# RIL
+PRODUCT_PACKAGES += \
+	libsecril-client
+
 # Sensors
 PRODUCT_PACKAGES += \
 	sensors.tuna \

@@ -110,16 +110,22 @@ TARGET_TUNA_AUDIO_HDMI := true
 
 # SELinux
 BOARD_SEPOLICY_DIRS += \
-        $(DEVICE_FOLDER)/sepolicy
+	$(DEVICE_FOLDER)/sepolicy
 
 BOARD_SEPOLICY_UNION += \
-        genfs_contexts \
-        file_contexts \
-        fRom.te \
-        init.te \
-        mediaserver.te \
-        pvrsrvinit.te \
-        rild.te
+	genfs_contexts \
+	file_contexts \
+	dumpdcc.te \
+	init.te \
+	mediaserver.te \
+	pvrsrvinit.te \
+	rild.te \
+	bluetooth.te \
+	sdcardd.te \
+	servicemanager.te \
+	system_server.te \
+	zygote.te \
+	vold.te
 
 # Recovery
 TARGET_RECOVERY_FSTAB = $(DEVICE_FOLDER)/rootdir/fstab.tuna

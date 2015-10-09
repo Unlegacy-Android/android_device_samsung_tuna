@@ -140,7 +140,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
 	LiveWallpapers \
 	LiveWallpapersPicker \
-	VisualizationWallpapers \
 	librs_jni
 
 # Key maps

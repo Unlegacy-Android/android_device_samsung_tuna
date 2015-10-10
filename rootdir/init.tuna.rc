@@ -152,6 +152,7 @@ service tf_daemon /system/bin/tf_daemon \
         class main
         user drmrpc
         group drmrpc
+        disabled
 
 service smc_pa_wvdrm /system/bin/smc_pa_ctrl \
         -c /vendor/etc/smc_normal_world_android_cfg.ini \
@@ -160,6 +161,7 @@ service smc_pa_wvdrm /system/bin/smc_pa_ctrl \
         user drmrpc
         group drmrpc
         oneshot
+        disabled
 
 service fuse_usbdisk /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/usbdisk /storage/usbdisk
     class late_start

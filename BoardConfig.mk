@@ -40,9 +40,6 @@ TARGET_KERNEL_CONFIG := tuna_defconfig
 TARGET_KERNEL_SOURCE := kernel/samsung/tuna
 TARGET_KERNEL_CUSTOM_TOOLCHAIN := arm-eabi-4.7
 
-# Use dlmalloc
-MALLOC_IMPL := dlmalloc
-
 # External SGX Module
 SGX_MODULES:
 	make clean -C $(HARDWARE_TI_OMAP4_BASE)/pvr-source/eurasiacon/build/linux2/omap4430_android

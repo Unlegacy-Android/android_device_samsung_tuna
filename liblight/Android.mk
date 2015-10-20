@@ -30,6 +30,8 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../kernel-headers
 
 LOCAL_MODULE_TAGS := optional
 
+LOCAL_CFLAGS := -Wall -Werror
+
 ifeq ($(TARGET_USE_CHARGING_LED),true)
 	LOCAL_CFLAGS += -DCHARGING_LED
 endif

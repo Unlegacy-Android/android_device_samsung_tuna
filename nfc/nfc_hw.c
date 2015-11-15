@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <stdlib.h>
 #include <errno.h>
 #include <string.h>
 
@@ -23,7 +24,7 @@ static uint8_t pn544_eedata_settings[][4] = {
     // DIFFERENTIAL_ANTENNA
 
     // RF Settings
-    {0x00,0x9B,0xD1,0x0D} // Tx consumption higher than 0x0D (average 50mA)
+     {0x00,0x9B,0xD1,0x0D} // Tx consumption higher than 0x0D (average 50mA)
     ,{0x00,0x9B,0xD2,0x24} // GSP setting for this threshold
     ,{0x00,0x9B,0xD3,0x0A} // Tx consumption higher than 0x0A (average 40mA)
     ,{0x00,0x9B,0xD4,0x22} // GSP setting for this threshold
@@ -31,21 +32,26 @@ static uint8_t pn544_eedata_settings[][4] = {
     ,{0x00,0x9B,0xD6,0x1E} // GSP setting for this threshold
     ,{0x00,0x9B,0xDD,0x1C} // GSP setting for this threshold
     ,{0x00,0x9B,0x84,0x13} // ANACM2 setting
-#ifdef maguro
+#if defined(maguro)
     // Maguro load modulation settings
     ,{0x00,0x99,0x29,0xF4} // Type A load modulation amplitude fine tuning
     ,{0x00,0x99,0x2A,0xF4} // Type B load modulation amplitude fine tuning
     ,{0x00,0x99,0x2B,0xF4} // Type B' load modulation amplitude fine tuning
     ,{0x00,0x99,0x85,0xF1} // Type Felica load modulation amplitude fine tuning
-#endif
-#ifdef toro
+#elif defined(toro) || defined(toroplus)
     // Toro load modulation settings
     ,{0x00,0x99,0x29,0xF3} // Type A load modulation amplitude fine tuning
     ,{0x00,0x99,0x2A,0xF3} // Type B load modulation amplitude fine tuning
     ,{0x00,0x99,0x2B,0xF3} // Type B' load modulation amplitude fine tuning
     ,{0x00,0x99,0x85,0xF1} // Type Felica load modulation amplitude fine tuning
+#elif defined(tuna)
+    // "Tuna" load modulation settings
+    // Compromise settings for builds targeting both models.
+    ,{0x00,0x99,0x29,0xF4} // Type A load modulation amplitude fine tuning
+    ,{0x00,0x99,0x2A,0xF4} // Type B load modulation amplitude fine tuning
+    ,{0x00,0x99,0x2B,0xF4} // Type B' load modulation amplitude fine tuning
+    ,{0x00,0x99,0x85,0xF1} // Type Felica load modulation amplitude fine tuning
 #endif
-    // For tuna we don't override load modulation settings.
 
     // Enable PBTF
     ,{0x00,0x98,0x00,0x3F} // SECURE_ELEMENT_CONFIGURATION - No Secure Element
@@ -88,16 +94,16 @@ static uint8_t pn544_eedata_settings[][4] = {
     ,{0x00,0x98,0xA2,0x08} // Set to 0x08 as required by [digital] (default value: 09)
 
     //SE GPIO
-    ,{0x00, 0x98, 0x93, 0x40}
+    ,{0x00,0x98,0x93,0x40}
 
     // Set NFCT ATQA
-    ,{0x00, 0x98, 0x7D, 0x02}
-    ,{0x00, 0x98, 0x7E, 0x00}
+    ,{0x00,0x98,0x7D,0x02}
+    ,{0x00,0x98,0x7E,0x00}
 
     // Enable CEA detection mechanism
-    ,{0x00, 0x9F, 0xC8, 0x01}
+    ,{0x00,0x9F,0xC8,0x01}
     // Set NFC-F poll RC=0x00
-    ,{0x00, 0x9F, 0x9A, 0x00}
+    ,{0x00,0x9F,0x9A,0x00}
     // Setting for EMD support for ISO 14443-4 Reader
     ,{0x00,0x9F,0x09,0x00} // 0x00 - Disable EMD support, 0x01 - Enable EMD support
 };

@@ -1,0 +1,35 @@
+#
+# system.prop for tuna
+#
+
+# Adding a '--' to the end of rild's args prevents RIL_Init from crashing
+# if Android passes an unknown argument after our own.
+rild.libargs=-d /dev/ttys0 --
+rild.libpath=/vendor/lib/libsec-ril.so
+
+ro.opengles.version=131072
+ro.sf.lcd_density=320
+ro.hwui.disable_scissor_opt=true
+
+# GPU producer to CPU consumer not supported
+ro.bq.gpu_to_cpu_unsupported=1
+
+# We don't support the new camera API.
+camera2.portability.force_api=1
+
+# WiFi Interface
+# wlan0 has been the default forever,
+# so don't bother setting it unless that changes.
+#wifi.interface=wlan0
+
+# Enable AAC 5.1 output
+media.aac_51_output_enabled=1
+
+# Set default USB interface
+persist.sys.usb.config=mtp
+
+# Avoids retrying for an EGL config w/o EGL_SWAP_BEHAVIOR_PRESERVED
+debug.hwui.render_dirty_regions=false
+
+# Disable VFR support for encoders
+debug.vfr.enable=0

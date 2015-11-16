@@ -18,7 +18,7 @@
 $(call inherit-product, device/samsung/tuna/overrides.mk)
 
 # Inherit from those products. Most specific first.
-$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
 # Inherit from tuna device
 $(call inherit-product, device/samsung/tuna/device.mk)
 

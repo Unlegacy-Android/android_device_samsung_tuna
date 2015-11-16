@@ -18,9 +18,7 @@ ro.bq.gpu_to_cpu_unsupported=1
 camera2.portability.force_api=1
 
 # WiFi Interface
-# wlan0 has been the default forever,
-# so don't bother setting it unless that changes.
-#wifi.interface=wlan0
+wifi.interface=wlan0
 
 # Enable AAC 5.1 output
 media.aac_51_output_enabled=1

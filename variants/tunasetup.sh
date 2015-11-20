@@ -83,7 +83,7 @@ mount -o remount,rw /system
 variant=""
 cmdline=$(cat /proc/cmdline)
 
-if [ -z "${cmdline##*I9250*}" ] ;then
+if [ -z "${cmdline##*I9250*}" ] || [ -z "${cmdline##*M420*}" ] || [ -z "${cmdline##*SCO4D*}" ] ;then
     variant="maguro"
     move_maguro_files
     delete_torocommon_files
@@ -92,11 +92,18 @@ elif [ -z "${cmdline##*I515*}" ] ;then
     move_toro_files
     delete_maguro_files
     delete_toroplus_files
-else
+elif [ -z "${cmdline##*L700*}" ] ;then
     variant="toroplus"
     move_toroplus_files
     delete_maguro_files
     delete_toro_files
+else
+    # Ideally, we would prefer to just not do anything here, because unknown.
+    # However, we need to do SOMETHING, otherwise we'll bootloop! *doh*
+    # Considering maguro is the most common variant, set it up for that.
+    variant="maguro"
+    move_maguro_files
+    delete_torocommon_files
 fi
 
 # Now that we've finished our job, remount system ro and reboot

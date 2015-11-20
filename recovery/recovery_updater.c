@@ -207,7 +207,10 @@ Value* GetTunaVariant(const char* name, State* state, int argc, Expr* argv[] __u
          * there's nothing stopping somebody from installing a toroplus-built
          * recovery on maguro or something like that! */
 
-        if (strstr(cmdline, "I9250") != NULL) {
+        if (strstr(cmdline, "I9250") != NULL || /* Most maguro variants. */
+            strstr(cmdline, "M420")  != NULL || /* South Korea / East Asia? */
+            strstr(cmdline, "SCO4D") != NULL    /* Japan / Pacific Asia? */
+            ) {
             variant = VARIANT_MAGURO;
             goto out;
         } else if (strstr(cmdline, "I515") != NULL) {

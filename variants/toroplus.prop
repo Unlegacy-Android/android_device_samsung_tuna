@@ -1,5 +1,5 @@
 # Properties for tuna variant: toroplus
-
+ro.product.subdevice=toroplus
 telephony.lteOnCdmaDevice=1
 
 ro.telephony.call_ring.multiple=0

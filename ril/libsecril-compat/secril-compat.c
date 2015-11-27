@@ -1,3 +1,6 @@
+#define LOG_TAG "secril-compat"
+#include <utils/Log.h>
+
 /**
  * With the switch to C++11 by default, char16_t became a unique type,
  * rather than basically just a typedef of uint16_t. As a result, the
@@ -6,7 +9,10 @@
  * Interestingly, nothing actually calls the function that references this!
  * So, just define the symbol; anything more is unnecessary.
  */
-void _ZN7android6Parcel13writeString16EPKtj() { }
+void _ZN7android6Parcel13writeString16EPKtj()
+{
+	ALOGE("%s: CALLED! SHOULD NOT HAPPEN!!", __func__);
+}
 
 /**
  * toroplus's RIL has the ability to take a screenshot. WTF?
@@ -14,4 +20,7 @@ void _ZN7android6Parcel13writeString16EPKtj() { }
  * There's no way in hell that codepath should be hit under
  * any legitimate circumstances. Just define the symbol.
  */
-void _ZN7android16ScreenshotClient6updateEv() { }
+void _ZN7android16ScreenshotClient6updateEv()
+{
+	ALOGE("%s: CALLED! SHOULD NOT HAPPEN!!", __func__);
+}

@@ -8,7 +8,8 @@ LOCAL_SRC_FILES := \
 	secril-compat.c
 
 LOCAL_SHARED_LIBRARIES := \
-	libhardware_legacy
+	libhardware_legacy \
+	liblog
 
 LOCAL_CFLAGS := -Wall -Werror
 

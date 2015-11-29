@@ -5,7 +5,7 @@
 # Adding a '--' to the end of rild's args prevents RIL_Init from crashing
 # if Android passes an unknown argument after our own.
 rild.libargs=-d /dev/ttys0 --
-rild.libpath=/vendor/lib/libsec-ril.so
+rild.libpath=/system/lib/libsecril-shim.so
 
 ro.opengles.version=131072
 ro.sf.lcd_density=320

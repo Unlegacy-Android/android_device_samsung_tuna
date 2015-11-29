@@ -59,7 +59,8 @@ PRODUCT_PACKAGES += \
 # RIL
 PRODUCT_PACKAGES += \
 	libsecril-client \
-	libsecril-compat
+	libsecril-compat \
+	libsecril-shim
 
 # Sensors
 PRODUCT_PACKAGES += \

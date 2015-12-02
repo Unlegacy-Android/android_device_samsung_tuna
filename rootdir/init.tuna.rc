@@ -5,11 +5,6 @@ on init
     symlink /sdcard /mnt/sdcard
     symlink /sdcard /storage/sdcard0
 
-    # create directory for mounting usb drives
-    chmod 0701 /mnt/media_rw
-    mkdir /mnt/media_rw/usbdisk 0775 system system
-    mkdir /storage/usbdisk 0000 system system
-
     # KSM
     write /sys/kernel/mm/ksm/pages_to_scan 100
     write /sys/kernel/mm/ksm/sleep_millisecs 500
@@ -163,10 +158,6 @@ service smc_pa_wvdrm /system/bin/smc_pa_ctrl \
         group drmrpc
         oneshot
         disabled
-
-service fuse_usbdisk /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/usbdisk /storage/usbdisk
-    class late_start
-    disabled
 
 service p2p_supplicant /system/bin/wpa_supplicant \
     -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \

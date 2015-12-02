@@ -64,8 +64,7 @@ PRODUCT_PACKAGES += \
 
 # Sensors
 PRODUCT_PACKAGES += \
-	sensors.tuna \
-	libinvensense_mpl
+	sensors.tuna
 
 # Charging mode
 PRODUCT_PACKAGES += \

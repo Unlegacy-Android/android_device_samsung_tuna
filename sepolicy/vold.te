@@ -1,0 +1,2 @@
+# vold
+allow vold efs_file:dir { getattr read open ioctl };

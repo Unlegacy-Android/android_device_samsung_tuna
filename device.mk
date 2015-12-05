@@ -202,6 +202,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
 	ro.bq.gpu_to_cpu_unsupported=1
 
+# Disable VFR support for encoders
+PRODUCT_PROPERTY_OVERRIDES += \
+	debug.vfr.enable=0
+
 PRODUCT_CHARACTERISTICS := nosdcard
 
 PRODUCT_TAGS += \

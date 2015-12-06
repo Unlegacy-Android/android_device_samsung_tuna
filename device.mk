@@ -108,10 +108,6 @@ PRODUCT_COPY_FILES += \
 	$(DEVICE_FOLDER)/rootdir/fstab.tuna:root/fstab.tuna \
 	$(DEVICE_FOLDER)/recovery/twrp.fstab:recovery/root/etc/twrp.fstab
 
-# GPS
-PRODUCT_COPY_FILES += \
-	$(DEVICE_FOLDER)/gps.conf:system/etc/gps.conf
-
 # Media profiles
 PRODUCT_COPY_FILES += \
 	frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \

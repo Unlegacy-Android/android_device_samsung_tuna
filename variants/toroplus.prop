@@ -1,0 +1,13 @@
+# Properties for tuna variant: toroplus
+ro.product.subdevice=toroplus
+telephony.lteOnCdmaDevice=1
+
+ro.telephony.call_ring.multiple=0
+ro.config.vc_call_vol_steps=7
+
+ro.ril.ecclist=112,911,#911,*911
+
+ro.telephony.default_network=8
+
+ro.cdma.home.operator.numeric=310120
+ro.cdma.home.operator.alpha=Sprint

@@ -18,7 +18,9 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE_TAGS := optional
 LOCAL_C_INCLUDES += bootable/recovery system/vold external/openssl/include
-LOCAL_SRC_FILES := recovery_updater.c bootloader.c
+LOCAL_SRC_FILES := recovery_updater.c bootloader.c update_cdma_modem.c
+
+LOCAL_CFLAGS := -Wall -Werror
 
 # should match TARGET_RECOVERY_UPDATER_LIBS set in BoardConfig.mk
 LOCAL_MODULE := librecovery_updater_tuna

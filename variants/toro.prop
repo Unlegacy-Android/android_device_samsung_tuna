@@ -1,0 +1,24 @@
+# Properties for tuna variant: toro
+ro.product.subdevice=toro
+telephony.lteOnCdmaDevice=1
+
+ro.telephony.call_ring.multiple=0
+ro.config.vc_call_vol_steps=7
+
+ro.ril.ecclist=112,911,#911,*911
+
+ro.telephony.default_network=8
+ro.telephony.default_cdma_sub=0
+
+persist.radio.imsregrequired=1
+persist.radio.imsallowmtsms=1
+
+ro.cdma.home.operator.numeric=311480
+ro.cdma.home.operator.alpha=Verizon
+ro.cdma.homesystem=64,65,76,77,78,79,80,81,82,83
+
+ro.cdma.data_retry_config=default_randomization=2000,0,0,120000,180000,540000,960000
+ro.gsm.data_retry_config=max_retries=infinite,default_randomization=2000,0,0,80000,125000,485000,905000
+ro.gsm.2nd_data_retry_config=max_retries=infinite,default_randomization=2000,0,0,80000,125000,485000,905000
+
+ro.cdma.otaspnumschema=SELC,1,80,99

@@ -69,6 +69,7 @@ on boot
 on fs
 	mkdir /factory 0775 radio radio
 	mount_all /fstab.tuna
+	start tuna_setup
 	restorecon /dev/block/platform/omap/omap_hsmmc.0/by-name/radio
 	restorecon_recursive /factory
 	mount ext4 /dev/block/platform/omap/omap_hsmmc.0/by-name/efs /factory ro remount
@@ -265,3 +266,10 @@ service bugreport /system/bin/dumpstate -d -p -B \
 
 service battery_charger /charger
 	class charger
+
+service tuna_setup /system/vendor/bin/tunasetup.sh
+    class main
+    user root
+    group root
+    disabled
+    oneshot

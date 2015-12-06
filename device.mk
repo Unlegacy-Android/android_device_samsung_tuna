@@ -21,9 +21,23 @@
 
 DEVICE_FOLDER := device/samsung/tuna
 
+# Processor
+TARGET_BOARD_OMAP_CPU := 4460
+
 $(call inherit-product-if-exists, hardware/ti/omap4/omap4.mk)
 
 DEVICE_PACKAGE_OVERLAYS := $(DEVICE_FOLDER)/overlay
+
+# We have 3 different variants of this device:
+# - maguro (GSM)
+# - toro (CDMA/LTE, VZW)
+# - toroplus (CDMA/LTE, SPR)
+# We need to set some stuff up based on what device we're working with.
+PRODUCT_COPY_FILES += \
+	$(DEVICE_FOLDER)/variants/tunasetup.sh:system/vendor/bin/tunasetup.sh \
+	$(DEVICE_FOLDER)/variants/maguro.prop:system/vendor/maguro/build.prop \
+	$(DEVICE_FOLDER)/variants/toro.prop:system/vendor/toro/build.prop \
+	$(DEVICE_FOLDER)/variants/toroplus.prop:system/vendor/toroplus/build.prop
 
 # This device is xhdpi.  However the platform doesn't
 # currently contain all of the bitmaps at xhdpi density so
@@ -71,10 +85,6 @@ endif
 PRODUCT_COPY_FILES += \
 	$(DEVICE_FOLDER)/audio/audio_effects.conf:system/vendor/etc/audio_effects.conf
 
-# Enable AAC 5.1 output
-PRODUCT_PROPERTY_OVERRIDES += \
-	media.aac_51_output_enabled=true
-
 # Symlinks
 PRODUCT_PACKAGES += \
 	libion.so
@@ -105,19 +115,10 @@ PRODUCT_COPY_FILES += \
 	$(DEVICE_FOLDER)/media_codecs.xml:system/etc/media_codecs.xml
 
 # Wifi
-ifneq ($(TARGET_PREBUILT_WIFI_MODULE),)
 PRODUCT_COPY_FILES += \
-	$(TARGET_PREBUILT_WIFI_MODULE):system/lib/modules/bcmdhd.ko
-endif
-PRODUCT_COPY_FILES += \
-	$(DEVICE_FOLDER)/bcmdhd.cal:system/etc/wifi/bcmdhd.cal
-
-PRODUCT_PROPERTY_OVERRIDES := \
-	wifi.interface=wlan0
-
-# Set default USB interface
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-	persist.sys.usb.config=mtp
+	$(DEVICE_FOLDER)/etc/wifi/bcmdhd.maguro.cal:system/etc/wifi/bcmdhd.maguro.cal \
+	$(DEVICE_FOLDER)/etc/wifi/bcmdhd.toro.cal:system/etc/wifi/bcmdhd.toro.cal \
+	$(DEVICE_FOLDER)/etc/wifi/bcmdhd.toroplus.cal:system/etc/wifi/bcmdhd.toroplus.cal
 
 # NFC
 PRODUCT_PACKAGES += \
@@ -164,11 +165,6 @@ PRODUCT_COPY_FILES += \
 	frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
 	frameworks/native/data/etc/android.hardware.audio.low_latency.xml:system/etc/permissions/android.hardware.audio.low_latency.xml
 
-# Melfas touchscreen firmware
-PRODUCT_COPY_FILES += \
-	$(DEVICE_FOLDER)/touchscreen/mms144_ts_rev31.fw:system/vendor/firmware/mms144_ts_rev31.fw \
-	$(DEVICE_FOLDER)/touchscreen/mms144_ts_rev32.fw:system/vendor/firmware/mms144_ts_rev32.fw
-
 # Commands to migrate prefs from com.android.nfc3 to com.android.nfc
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
 	packages/apps/Nfc/migrate_nfc.txt:system/etc/updatecmds/migrate_nfc.txt)
@@ -192,20 +188,6 @@ endif
 PRODUCT_COPY_FILES += \
 	$(NFCEE_ACCESS_PATH):system/etc/nfcee_access.xml
 
-PRODUCT_PROPERTY_OVERRIDES += \
-	ro.opengles.version=131072 \
-	ro.sf.lcd_density=320 \
-	ro.hwui.disable_scissor_opt=true \
-	debug.hwui.render_dirty_regions=false
-
-# GPU producer to CPU consumer not supported
-PRODUCT_PROPERTY_OVERRIDES += \
-	ro.bq.gpu_to_cpu_unsupported=1
-
-# Disable VFR support for encoders
-PRODUCT_PROPERTY_OVERRIDES += \
-	debug.vfr.enable=0
-
 PRODUCT_CHARACTERISTICS := nosdcard
 
 PRODUCT_TAGS += \
@@ -221,7 +203,14 @@ PRODUCT_PACKAGES += \
 
 # DCC
 PRODUCT_PACKAGES += \
-    dumpdcc
+	dumpdcc
+
+# cdma is for toro and toroplus, gsm is for maguro.
+# the ones not applicable to the device will be removed on first boot-up.
+PRODUCT_COPY_FILES += \
+	frameworks/native/data/etc/android.hardware.telephony.cdma.xml:system/etc/permissions/android.hardware.telephony.cdma.xml \
+	frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml
+
 
 $(call inherit-product, frameworks/native/build/phone-xhdpi-1024-dalvik-heap.mk)
 

@@ -13,6 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-$(call inherit-product, device/samsung/tuna/full_tuna.mk)
 
-PRODUCT_NAME := aosp_tuna
+# Since the first thing in PRODUCT_COPY_FILES takes precedence, organize some 'overrides' like this.
+$(call inherit-product, device/samsung/tuna/overrides.mk)
+
+# Inherit from those products. Most specific first.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
+# Inherit from tuna device
+$(call inherit-product, device/samsung/tuna/device.mk)
+
+# Set those variables here to overwrite the inherited values.
+PRODUCT_NAME         := aosp_tuna
+PRODUCT_DEVICE       := tuna
+PRODUCT_BRAND        := Google
+PRODUCT_MODEL        := Galaxy Nexus
+PRODUCT_MANUFACTURER := Samsung

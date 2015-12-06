@@ -32,7 +32,16 @@ def FullOTA_InstallEnd(info):
   else:
     WriteRadio(info, radio_img)
 
+  # CDMA Radio
+  try:
+    radio_cdma_img = info.input_zip.read("RADIO/radio-cdma.img")
+  except KeyError:
+    print "no radio.img in target_files; skipping install"
+  else:
+    WriteRadioCdma(info, radio_cdma_img)
+
   FsSizeFix(info)
+  TunaVariantSetup(info)
 
 def IncrementalOTA_VerifyEnd(info):
   try:
@@ -76,10 +85,28 @@ def IncrementalOTA_InstallEnd(info):
   except KeyError:
     print "no radio.img in target target_files; skipping install"
 
+  # CDMA Radio
+  try:
+    target_radio_cdma_img = info.target_zip.read("RADIO/radio-cdma.img")
+    try:
+      source_radio_cdma_img = info.source_zip.read("RADIO/radio-cdma.img")
+    except KeyError:
+      source_radio_cdma_img = None
+
+    if source_radio_cdma_img == target_radio_cdma_img:
+      print "radio-cdma unchanged; skipping"
+    else:
+      WriteRadioCdma(info, target_radio_cdma_img)
+  except KeyError:
+    print "no radio-cdma.img in target target_files; skipping install"
+
   FsSizeFix(info)
 
+# It is safe to attempt to run FsSizeFix on toro(plus)
+# It simply determines everything's fine and does nothing.
 def FsSizeFix(info):
-  info.script.Print("Fixing fs_size in crypto footer...")
+  # No longer print this out, it's annoying.
+  #info.script.Print("Fixing fs_size in crypto footer...")
   info.script.AppendExtra('''assert(samsung.fs_size_fix());''')
 
 def WriteBootloader(info, bootloader_img):
@@ -119,3 +146,74 @@ def WriteRadio(info, target_radio_img, source_radio_img=None):
             "%s:%s:%d:%s:%d:%s" % (radio_type, radio_device,
                                    sf.size, sf.sha1, tf.size, tf.sha1),
             "-", tf.size, tf.sha1, sf.sha1, "radio.img.p")
+
+def WriteRadioCdma(info, radio_cdma_img):
+  common.ZipWriteStr(info.output_zip, "radio-cdma.img", radio_cdma_img)
+  info.script.Print("Writing CDMA radio...")
+  info.script.AppendExtra('''assert(samsung.update_cdma_modem(
+    package_extract_file("radio-cdma.img")));''')
+
+def TunaVariantSetup(info):
+  info.script.AppendExtra('ui_print("device variant: " + tuna.get_variant());')
+
+  info.script.AppendExtra('''if (tuna.get_variant() == "maguro") then (
+  rename("/system/vendor/maguro/build.prop", "/system/vendor/build.prop");
+  symlink("bcmdhd.maguro.cal", "/system/etc/wifi/bcmdhd.cal");
+  symlink("../maguro/etc/sirfgps.conf", "/system/vendor/etc/sirfgps.conf");
+  symlink("../maguro/firmware/bcm4330.hcd", "/system/vendor/firmware/bcm4330.hcd");
+  symlink("../../maguro/lib/hw/gps.omap4.so", "/system/vendor/lib/hw/gps.omap4.so");
+  symlink("../maguro/lib/libsec-ril.so", "/system/vendor/lib/libsec-ril.so");
+  delete("/system/etc/permissions/android.hardware.telephony.cdma.xml");
+  delete("/system/etc/wifi/bcmdhd.toro.cal");
+  delete("/system/etc/wifi/bcmdhd.toroplus.cal");
+  delete("/system/vendor/toro-common/etc/sirfgps.conf");
+  delete("/system/vendor/toro-common/firmware/bcm4330.hcd");
+  delete("/system/vendor/toro-common/lib/hw/gps.omap4.so");
+  delete("/system/vendor/toro-common/lib/lib_gsd4t.so");
+  delete("/system/vendor/toro/build.prop");
+  delete("/system/vendor/toro/lib/libims.so");
+  delete("/system/vendor/toro/lib/libims_jni.so");
+  delete("/system/vendor/toro/lib/libsec-ril_lte.so");
+  delete("/system/vendor/toroplus/build.prop");
+  delete("/system/vendor/toroplus/lib/libsec-ril_lte.so");
+) endif;''')
+
+  info.script.AppendExtra('''if (tuna.get_variant() == "toro") then (
+  rename("/system/vendor/toro/build.prop", "/system/vendor/build.prop");
+  symlink("bcmdhd.toro.cal", "/system/etc/wifi/bcmdhd.cal");
+  symlink("../toro/lib/libims.so", "/system/vendor/lib/libims.so");
+  symlink("../toro/lib/libims_jni.so", "/system/vendor/lib/libims_jni.so");
+  symlink("../toro/lib/libsec-ril_lte.so", "/system/vendor/lib/libsec-ril.so");
+  delete("/system/etc/wifi/bcmdhd.toroplus.cal");
+  delete("/system/vendor/toroplus/build.prop");
+  delete("/system/vendor/toroplus/lib/libsec-ril_lte.so");
+) endif;''')
+
+  info.script.AppendExtra('''if (tuna.get_variant() == "toroplus") then (
+  rename("/system/vendor/toroplus/build.prop", "/system/vendor/build.prop");
+  symlink("bcmdhd.toroplus.cal", "/system/etc/wifi/bcmdhd.cal");
+  symlink("../toroplus/lib/libsec-ril_lte.so", "/system/vendor/lib/libsec-ril.so");
+  delete("/system/etc/wifi/bcmdhd.toro.cal");
+  delete("/system/vendor/toro/build.prop");
+  delete("/system/vendor/toro/lib/libims.so");
+  delete("/system/vendor/toro/lib/libims_jni.so");
+  delete("/system/vendor/toro/lib/libsec-ril_lte.so");
+) endif;''')
+
+  info.script.AppendExtra('''if (tuna.get_variant() == "toro" || tuna.get_variant() == "toroplus") then (
+  symlink("../toro-common/etc/sirfgps.conf", "/system/vendor/etc/sirfgps.conf");
+  symlink("../toro-common/firmware/bcm4330.hcd", "/system/vendor/firmware/bcm4330.hcd");
+  symlink("../../toro-common/lib/hw/gps.omap4.so", "/system/vendor/lib/hw/gps.omap4.so");
+  symlink("../toro-common/lib/lib_gsd4t.so", "/system/vendor/lib/lib_gsd4t.so");
+  delete("/system/etc/permissions/android.hardware.telephony.gsm.xml");
+  delete("/system/etc/wifi/bcmdhd.maguro.cal");
+  delete("/system/vendor/maguro/build.prop");
+  delete("/system/vendor/maguro/etc/sirfgps.conf");
+  delete("/system/vendor/maguro/firmware/bcm4330.hcd");
+  delete("/system/vendor/maguro/lib/hw/gps.omap4.so");
+  delete("/system/vendor/maguro/lib/libsec-ril.so");
+) endif;''')
+
+  info.script.AppendExtra('''if (tuna.get_variant() == "unknown") then (
+  ui_print("Will attempt variant fixes on first boot; expect an extra reboot!")
+) endif;''')

@@ -9,6 +9,7 @@ LOCAL_SRC_FILES := \
 
 LOCAL_SHARED_LIBRARIES := \
 	libhardware_legacy \
+	libbinder \
 	liblog
 
 LOCAL_CFLAGS := -Wall -Werror

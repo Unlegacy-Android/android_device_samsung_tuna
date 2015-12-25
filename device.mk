@@ -131,7 +131,7 @@ PRODUCT_PACKAGES += \
 
 # NFC
 PRODUCT_PACKAGES += \
-	Nfc \
+	NfcNxp \
 	Tag
 
 # Live Wallpapers

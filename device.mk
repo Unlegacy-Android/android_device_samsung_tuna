@@ -26,7 +26,7 @@ TARGET_BOARD_OMAP_CPU := 4460
 
 $(call inherit-product-if-exists, hardware/ti/omap4/omap4.mk)
 
-DEVICE_PACKAGE_OVERLAYS := $(DEVICE_FOLDER)/overlay
+DEVICE_PACKAGE_OVERLAYS += $(DEVICE_FOLDER)/overlay
 
 # We have 3 different variants of this device:
 # - maguro (GSM)

@@ -40,6 +40,10 @@ PRODUCT_COPY_FILES += \
 	$(DEVICE_FOLDER)/variants/toro.prop:system/vendor/toro/build.prop \
 	$(DEVICE_FOLDER)/variants/toroplus.prop:system/vendor/toroplus/build.prop
 
+#toro apns
+PRODUCT_COPY_FILES += \
+	$(DEVICE_FOLDER)/prebuilt/etc/apns-conf.xml:system/vendor/toro/etc/apns-conf.xml
+
 # This device is xhdpi.  However the platform doesn't
 # currently contain all of the bitmaps at xhdpi density so
 # we do this little trick to fall back to the hdpi version

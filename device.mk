@@ -131,12 +131,6 @@ PRODUCT_PACKAGES += \
 	NfcNxp \
 	Tag
 
-# Live Wallpapers
-PRODUCT_PACKAGES += \
-	LiveWallpapers \
-	LiveWallpapersPicker \
-	librs_jni
-
 # Key maps
 PRODUCT_COPY_FILES += \
 	$(DEVICE_FOLDER)/keymap/tuna-gpio-keypad.kl:system/usr/keylayout/tuna-gpio-keypad.kl \
@@ -190,9 +184,6 @@ PRODUCT_COPY_FILES += \
 	$(NFCEE_ACCESS_PATH):system/etc/nfcee_access.xml
 
 PRODUCT_CHARACTERISTICS := nosdcard
-
-PRODUCT_PACKAGES += \
-	com.android.future.usb.accessory
 
 # Filesystem management tools
 PRODUCT_PACKAGES += \

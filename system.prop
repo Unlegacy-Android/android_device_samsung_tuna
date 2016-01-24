@@ -23,9 +23,6 @@ wifi.interface=wlan0
 # Enable AAC 5.1 output
 media.aac_51_output_enabled=1
 
-# Set default USB interface
-persist.sys.usb.config=mtp
-
 # Avoids retrying for an EGL config w/o EGL_SWAP_BEHAVIOR_PRESERVED
 debug.hwui.render_dirty_regions=false
 

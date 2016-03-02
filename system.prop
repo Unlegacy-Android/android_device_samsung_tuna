@@ -26,5 +26,8 @@ media.aac_51_output_enabled=1
 # Avoids retrying for an EGL config w/o EGL_SWAP_BEHAVIOR_PRESERVED
 debug.hwui.render_dirty_regions=false
 
+# We don't support eglSwapBuffersWithDamageKHR; this avoids some unnecessary code.
+debug.hwui.swap_with_damage=false
+
 # Disable VFR support for encoders
 debug.vfr.enable=0

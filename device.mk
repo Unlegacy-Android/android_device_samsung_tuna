@@ -94,8 +94,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
 	tuna_hdcp_keys
 
-#PRODUCT_PACKAGES += \
-#	keystore.tuna
+PRODUCT_PACKAGES += \
+	keystore.tuna
 
 # Init files
 PRODUCT_COPY_FILES += \

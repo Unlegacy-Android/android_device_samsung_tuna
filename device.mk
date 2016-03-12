@@ -35,6 +35,7 @@ DEVICE_PACKAGE_OVERLAYS += $(DEVICE_FOLDER)/overlay
 # We need to set some stuff up based on what device we're working with.
 PRODUCT_COPY_FILES += \
 	$(DEVICE_FOLDER)/variants/tunasetup.sh:system/vendor/bin/tunasetup.sh \
+	$(DEVICE_FOLDER)/variants/tee-fs-setup.sh:system/vendor/bin/tee-fs-setup.sh \
 	$(DEVICE_FOLDER)/variants/maguro.prop:system/vendor/maguro/build.prop \
 	$(DEVICE_FOLDER)/variants/toro.prop:system/vendor/toro/build.prop \
 	$(DEVICE_FOLDER)/variants/toroplus.prop:system/vendor/toroplus/build.prop

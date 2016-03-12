@@ -12,11 +12,6 @@ on init
     write /sys/kernel/mm/ksm/run 1
 
 on post-fs-data
-    mkdir /data/smc 0770 drmrpc drmrpc
-    chown drmrpc drmrpc /data/smc/counter.bin
-    chown drmrpc drmrpc /data/smc/storage.bin
-    chown drmrpc drmrpc /data/smc/system.bin
-
     # camera calibration
     mkdir /data/misc/camera 0770 media media
     mkdir /data/misc/camera/R5_MVEN003_LD2_ND0_IR0_SH0_FL1_SVEN003_DCCID1044 0770 media media
@@ -50,11 +45,14 @@ on boot
 
 on fs
     mkdir /factory 0775 radio radio
+    mkdir /tee 0770 drmrpc drmrpc
     mount_all /fstab.tuna
-    start tuna_setup
+
     restorecon /dev/block/platform/omap/omap_hsmmc.0/by-name/radio
     restorecon_recursive /factory
     mount ext4 /dev/block/platform/omap/omap_hsmmc.0/by-name/efs /factory ro remount
+
+    start tee_fs_setup
 
     # change permissions for mtd device
     chmod 0660 /dev/mtd/mtd0
@@ -130,7 +128,7 @@ service setup_fs /system/bin/setup_fs \
 
 service tf_daemon /system/bin/tf_daemon \
         -d -c /vendor/etc/smc_normal_world_android_cfg.ini
-        class main
+        class core
         user drmrpc
         group drmrpc
         disabled
@@ -227,8 +225,26 @@ service battery_charger /sbin/healthd -c
     critical
     seclabel u:r:healthd:s0
 
+service tee_fs_setup /system/vendor/bin/tee-fs-setup.sh
+    class core
+    user root
+    group root
+    disabled
+    oneshot
+
+on property:init.tee_fs.ready=true
+    start smc_pa_wvdrm
+    start tf_daemon
+
+# Both tee_fs_setup and tuna_setup can perform reboots as
+# part of initialization, therefore we don't want them to
+# run simulataneously, otherwise we might end up in
+# partially initialized state.
+on property:init.svc.tee_fs_setup=stopped
+    start tuna_setup
+
 service tuna_setup /system/vendor/bin/tunasetup.sh
-    class main
+    class core
     user root
     group root
     disabled

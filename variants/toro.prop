@@ -10,6 +10,8 @@ ro.ril.ecclist=112,911,#911,*911
 ro.telephony.default_network=8
 ro.telephony.default_cdma_sub=0
 
+ro.telephony.ril.config=setPrefNwTypeOnUnsolConnected
+
 persist.radio.imsregrequired=1
 persist.radio.imsallowmtsms=1
 

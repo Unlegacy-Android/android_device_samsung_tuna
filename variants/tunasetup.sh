@@ -53,6 +53,7 @@ move_toro_files() {
     mv /system/vendor/toro/lib/libims.so /system/vendor/lib/libims.so
     mv /system/vendor/toro/lib/libims_jni.so /system/vendor/lib/libims_jni.so
     mv /system/vendor/toro/lib/libsec-ril_lte.so /system/vendor/lib/libsec-ril.so
+    mv /system/vendor/toro/etc/apns-conf.xml /system/etc/apns-conf.xml
 
 #    mkdir -p /system/vendor/app/
 #    mv /system/vendor/toro/app/BIP.kpa /system/vendor/app/BIP.apk

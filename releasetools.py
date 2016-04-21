@@ -181,6 +181,7 @@ def TunaVariantSetup(info):
   delete("/system/vendor/toro-common/lib/hw/gps.omap4.so");
   delete("/system/vendor/toro-common/lib/lib_gsd4t.so");
   delete("/system/vendor/toro/build.prop");
+  delete("/system/vendor/toro/etc/apns-conf.xml");
   delete("/system/vendor/toro/lib/libims.so");
   delete("/system/vendor/toro/lib/libims_jni.so");
   delete("/system/vendor/toro/lib/libsec-ril_lte.so");
@@ -190,6 +191,7 @@ def TunaVariantSetup(info):
 
   info.script.AppendExtra('''if (tuna.get_variant() == "toro") then (
   rename("/system/vendor/toro/build.prop", "/system/vendor/build.prop");
+  rename("/system/vendor/toro/etc/apns-conf.xml", "/system/etc/apns-conf.xml");
   symlink("bcmdhd.toro.cal", "/system/etc/wifi/bcmdhd.cal");
   symlink("../toro/lib/libims.so", "/system/vendor/lib/libims.so");
   symlink("../toro/lib/libims_jni.so", "/system/vendor/lib/libims_jni.so");
@@ -205,6 +207,7 @@ def TunaVariantSetup(info):
   symlink("../toroplus/lib/libsec-ril_lte.so", "/system/vendor/lib/libsec-ril.so");
   delete("/system/etc/wifi/bcmdhd.toro.cal");
   delete("/system/vendor/toro/build.prop");
+  delete("/system/vendor/toro/etc/apns-conf.xml");
   delete("/system/vendor/toro/lib/libims.so");
   delete("/system/vendor/toro/lib/libims_jni.so");
   delete("/system/vendor/toro/lib/libsec-ril_lte.so");

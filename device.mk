@@ -44,32 +44,25 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
 	$(DEVICE_FOLDER)/prebuilt/etc/apns-conf.xml:system/vendor/toro/etc/apns-conf.xml
 
-# This device is xhdpi.  However the platform doesn't
-# currently contain all of the bitmaps at xhdpi density so
-# we do this little trick to fall back to the hdpi version
-# if the xhdpi doesn't exist.
-PRODUCT_AAPT_CONFIG := normal hdpi xhdpi
+PRODUCT_AAPT_CONFIG := normal
 PRODUCT_AAPT_PREF_CONFIG := xhdpi
 
 # HALs
 PRODUCT_PACKAGES += \
-	hwcomposer.tuna \
+	audio.primary.tuna \
 	camera.omap4 \
+	keystore.tuna \
+	libpn544_fw \
 	lights.tuna \
 	nfc.tuna \
-	libpn544_fw \
 	power.tuna \
-	audio.primary.tuna
+	sensors.tuna
 
 # RIL
 PRODUCT_PACKAGES += \
 	libsecril-client \
 	libsecril-compat \
 	libsecril-shim
-
-# Sensors
-PRODUCT_PACKAGES += \
-	sensors.tuna
 
 # Charging mode
 PRODUCT_PACKAGES += \
@@ -99,9 +92,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
 	tuna_hdcp_keys
 
-PRODUCT_PACKAGES += \
-	keystore.tuna
-
 # Init files
 PRODUCT_COPY_FILES += \
 	$(DEVICE_FOLDER)/rootdir/init.tuna.rc:root/init.tuna.rc \
@@ -110,8 +100,7 @@ PRODUCT_COPY_FILES += \
 
 # Fstab
 PRODUCT_COPY_FILES += \
-	$(DEVICE_FOLDER)/rootdir/fstab.tuna:root/fstab.tuna \
-	$(DEVICE_FOLDER)/recovery/twrp.fstab:recovery/root/etc/twrp.fstab
+	$(DEVICE_FOLDER)/rootdir/fstab.tuna:root/fstab.tuna
 
 # GPS
 $(call inherit-product, device/common/gps/gps_us_supl.mk)
@@ -180,10 +169,6 @@ PRODUCT_COPY_FILES += \
 	frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
 	frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
 	frameworks/native/data/etc/android.hardware.audio.low_latency.xml:system/etc/permissions/android.hardware.audio.low_latency.xml
-
-# Commands to migrate prefs from com.android.nfc3 to com.android.nfc
-PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
-	packages/apps/Nfc/migrate_nfc.txt:system/etc/updatecmds/migrate_nfc.txt)
 
 # file that declares the MIFARE NFC constant
 PRODUCT_COPY_FILES += \

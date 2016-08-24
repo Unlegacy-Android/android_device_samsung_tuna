@@ -2,8 +2,6 @@ import init.omap4.rc
 import init.tuna.usb.rc
 
 on init
-    # Support legacy paths
-    symlink /sdcard /mnt/sdcard
     symlink /sdcard /storage/sdcard0
 
     # KSM

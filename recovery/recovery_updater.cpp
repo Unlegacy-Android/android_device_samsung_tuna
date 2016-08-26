@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include "cryptfs.h"
 
+#include "error_code.h"
 #include "edify/expr.h"
 #include "recovery_updater.h"
 #include "bootloader.h"
@@ -66,7 +67,7 @@ Value* WriteBootloaderFn(const char* name, State* state, int argc, Expr* argv[])
     Value* sbl_loc;
 
     if (argc != 3) {
-        return ErrorAbort(state, "%s() expects 3 args, got %d", name, argc);
+        return ErrorAbort(state, kArgsParsingFailure, "%s() expects 3 args, got %d", name, argc);
     }
 
     if (ReadValueArgs(state, argv, 3, &img, &xloader_loc, &sbl_loc) < 0) {
@@ -79,7 +80,7 @@ Value* WriteBootloaderFn(const char* name, State* state, int argc, Expr* argv[])
       FreeValue(img);
       FreeValue(xloader_loc);
       FreeValue(sbl_loc);
-      return ErrorAbort(state, "%s(): argument types are incorrect", name);
+      return ErrorAbort(state, kArgsParsingFailure, "%s(): argument types are incorrect", name);
     }
 
     result = update_bootloader(img->data, img->size,
@@ -96,7 +97,7 @@ Value* UpdateCdmaModemFn(const char* name, State* state, int argc, Expr* argv[])
     Value* img;
 
     if (argc != 1) {
-        return ErrorAbort(state, "%s() expects 1 arg, got %d", name, argc);
+        return ErrorAbort(state, kArgsParsingFailure, "%s() expects 1 arg, got %d", name, argc);
     }
 
     if (ReadValueArgs(state, argv, 1, &img) < 0) {
@@ -105,7 +106,7 @@ Value* UpdateCdmaModemFn(const char* name, State* state, int argc, Expr* argv[])
 
     if(img->type != VAL_BLOB) {
       FreeValue(img);
-      return ErrorAbort(state, "%s(): argument types are incorrect", name);
+      return ErrorAbort(state, kArgsParsingFailure, "%s(): argument types are incorrect", name);
     }
 
     result = update_cdma_modem(img->data, img->size);
@@ -140,16 +141,16 @@ Value* FsSizeFixFn(const char* name, State* state, int argc, Expr* argv[] __unus
     int fd;
 
     if (argc != 0) {
-        return ErrorAbort(state, "%s() expects 0 args, got %d", name, argc);
+        return ErrorAbort(state, kArgsParsingFailure, "%s() expects 0 args, got %d", name, argc);
     }
 
     if ((fd = open(HSPA_PRIME_KEY_PARTITION, O_RDWR)) == -1) {
-        return ErrorAbort(state, "%s() Cannot open %s\n", name, HSPA_PRIME_KEY_PARTITION);
+        return ErrorAbort(state, kFileOpenFailure, "%s() Cannot open %s\n", name, HSPA_PRIME_KEY_PARTITION);
     }
 
     if (read(fd, &ftr, sizeof(ftr)) != sizeof(ftr)) {
         close(fd);
-        return ErrorAbort(state, "%s() Cannot read crypto footer %s\n", name, HSPA_PRIME_KEY_PARTITION);
+        return ErrorAbort(state, kFreadFailure, "%s() Cannot read crypto footer %s\n", name, HSPA_PRIME_KEY_PARTITION);
     }
 
    if ((ftr.magic == CRYPT_MNT_MAGIC) && (ftr.fs_size == BAD_SIZE)) {
@@ -163,7 +164,7 @@ Value* FsSizeFixFn(const char* name, State* state, int argc, Expr* argv[] __unus
             }
         }
         close(fd);
-        return ErrorAbort(state, "%s() Cannot seek or write crypto footer %s\n", name, HSPA_PRIME_KEY_PARTITION);
+        return ErrorAbort(state, kFwriteFailure, "%s() Cannot seek or write crypto footer %s\n", name, HSPA_PRIME_KEY_PARTITION);
     }
 
     /* Nothing to do */
@@ -190,7 +191,7 @@ Value* GetTunaVariant(const char* name, State* state, int argc, Expr* argv[] __u
     char cmdline[buffer_size];
 
     if (argc != 0) {
-        return ErrorAbort(state, "%s() expects 0 args, got %d", name, argc);
+        return ErrorAbort(state, kArgsParsingFailure, "%s() expects 0 args, got %d", name, argc);
     }
 
     if (variant != VARIANT_INIT) {

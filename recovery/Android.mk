@@ -6,8 +6,8 @@ include $(CLEAR_VARS)
 # Edify extension functions for doing bootloader updates on Tuna devices.
 
 LOCAL_MODULE_TAGS := optional
-LOCAL_C_INCLUDES += bootable/recovery system/vold external/openssl/include
-LOCAL_SRC_FILES := recovery_updater.c bootloader.c update_cdma_modem.c
+LOCAL_C_INCLUDES := bootable/recovery system/vold external/openssl/include
+LOCAL_SRC_FILES := recovery_updater.cpp bootloader.cpp update_cdma_modem.cpp
 
 LOCAL_CFLAGS := -Wall -Werror
 

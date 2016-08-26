@@ -1,3 +1,6 @@
 # cameraserver
 allow cameraserver system_server:unix_stream_socket { read write };
 allow cameraserver sensorservice_service:service_manager find;
+allow cameraserver gpu_device:chr_file { ioctl open read write };
+allow cameraserver rpmsg_device:chr_file { ioctl open read write };
+allow cameraserver sysfs:file { getattr open read };

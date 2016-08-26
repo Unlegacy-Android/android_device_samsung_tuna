@@ -11,8 +11,7 @@ on init
 
 on post-fs-data
     # camera calibration
-    mkdir /data/misc/camera 0770 media media
-    mkdir /data/misc/camera/R5_MVEN003_LD2_ND0_IR0_SH0_FL1_SVEN003_DCCID1044 0770 media media
+    mkdir /data/misc/cameraserver/R5_MVEN003_LD2_ND0_IR0_SH0_FL1_SVEN003_DCCID1044 0700 cameraserver cameraserver
 
     mkdir /data/radio 0775 radio radio
     mkdir /data/radio/log 0775 radio radio
@@ -56,12 +55,12 @@ on fs
     write /sys/block/mmcblk0/queue/read_ahead_kb 256
 
     # change permissions for mtd device
-    chmod 0660 /dev/mtd/mtd0
-    chown media media /dev/mtd/mtd0
+    chmod 0600 /dev/mtd/mtd0
+    chown cameraserver cameraserver /dev/mtd/mtd0
 
     # change permissions for i2c-2 device
-    chmod 0660 /dev/i2c-2
-    chown media media /dev/i2c-2
+    chmod 0600 /dev/i2c-2
+    chown cameraserver cameraserver /dev/i2c-2
 
     # pvr module
     insmod /system/lib/modules/pvrsrvkm_sgx540_120.ko
@@ -113,8 +112,8 @@ on property:ril.modem.lte.powercontrol=*
     write /sys/bus/usb/devices/1-1/power/control ${ril.modem.lte.powercontrol}
 
 service dumpdcc /system/bin/dumpdcc
-    user media
-    group media
+    user cameraserver
+    group cameraserver
     class late_start
     oneshot
 

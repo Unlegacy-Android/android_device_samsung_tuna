@@ -8,7 +8,7 @@ allow rild self:process execmem;
 allow rild block_device:dir { search };
 
 # Needed for /system/vendor/lib/libsec-ril.so
-allow rild system_file:file { execute execmod };
+#allow rild system_file:file { execute execmod };
 
 # Have no idea why rild needs access to logcat,
 # potentially to catch errors from some other components?
@@ -19,7 +19,7 @@ allow rild logcat_exec:file { getattr read open execute execute_no_trans };
 # other three. maguro may or may not need these.
 # Device-specific calls could be moved into their respective device trees
 # in the future.
-allow rild self:unix_stream_socket 0x89a0;
-allow rild self:unix_stream_socket 0x89a2;
-allow rild self:unix_stream_socket 0x89a3;
-allow rild self:unix_stream_socket 0x89f0;
+#allow rild self:unix_stream_socket 0x89a0;
+#allow rild self:unix_stream_socket 0x89a2;
+#allow rild self:unix_stream_socket 0x89a3;
+#allow rild self:unix_stream_socket 0x89f0;

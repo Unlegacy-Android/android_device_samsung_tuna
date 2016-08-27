@@ -51,3 +51,16 @@
 
 #for cp log
 /dev/cdma_cplog		0660	radio	radio
+
+# Camera
+/dev/mtd/mtd0             0600   cameraserver cameraserver
+/dev/i2c-2                0600   cameraserver cameraserver
+
+# NFC
+/dev/ttyO3                0600   nfc          nfc
+
+# Bluetooth
+/dev/ttyO1                0600   bluetooth    bluetooth
+
+# LED
+/dev/an30259a_leds        0600   system       system

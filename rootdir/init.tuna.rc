@@ -54,14 +54,6 @@ on fs
     # increase read-ahead value to 256 kb
     write /sys/block/mmcblk0/queue/read_ahead_kb 256
 
-    # change permissions for mtd device
-    chmod 0600 /dev/mtd/mtd0
-    chown cameraserver cameraserver /dev/mtd/mtd0
-
-    # change permissions for i2c-2 device
-    chmod 0600 /dev/i2c-2
-    chown cameraserver cameraserver /dev/i2c-2
-
     # pvr module
     insmod /system/lib/modules/pvrsrvkm_sgx540_120.ko
 
@@ -70,25 +62,18 @@ on fs
 
     # nfc
     setprop ro.nfc.port "COM4"
-    chmod 0600 /dev/ttyO3
-    chown nfc nfc /dev/ttyO3
     chmod 0600 /sys/devices/platform/nfc-power/nfc_power
     chown nfc nfc /sys/devices/platform/nfc-power/nfc_power
 
     # permissions for bluetooth.
     setprop ro.bt.bdaddr_path "/factory/bluetooth/bt_addr"
     chown bluetooth bluetooth ro.bt.bdaddr_path
-    chown bluetooth bluetooth /dev/ttyO1
-    chmod 0600 /dev/ttyO1
     chmod 0660 /sys/class/rfkill/rfkill0/state
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
 
     # backlight
     chown system system /sys/class/backlight/s6e8aa0/brightness
-
-    # leds
-    chown system system /dev/an30259a_leds
 
     # for GPS
     chown root system /sys/class/sec/gps/GPS_PWR_EN/value

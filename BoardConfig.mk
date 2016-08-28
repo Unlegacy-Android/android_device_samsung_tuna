@@ -95,6 +95,9 @@ TARGET_TUNA_AUDIO_HDMI := true
 # TODO: find a way to ONLY apply this to toro(plus), and leave maguro alone.
 BOARD_INVENSENSE_APPLY_COMPASS_NOISE_FILTER := true
 
+# Some of our vendor libs have text relocations
+TARGET_NEEDS_PLATFORM_TEXTRELS := true
+
 # SELinux
 BOARD_SEPOLICY_DIRS += \
 	$(DEVICE_FOLDER)/sepolicy

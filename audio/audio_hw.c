@@ -2882,8 +2882,16 @@ static int adev_set_mic_mute(struct audio_hw_device *dev, bool state)
 {
     struct tuna_audio_device *adev = (struct tuna_audio_device *)dev;
 
-    if (adev->mode == AUDIO_MODE_IN_CALL)
-            ril_set_mic_mute(&adev->ril, state);
+    if (adev->mode == AUDIO_MODE_IN_CALL) {
+        ril_set_mic_mute(&adev->ril, state);
+        /* Not all devices work with the ril_set_mic_mute function.
+         * the following change is acceptable if sec_mic_mute fails. */
+        unsigned int channel;
+        int volume = (state ? 0 : MIXER_ABE_GAIN_0DB);
+        for (channel = 0; channel < 2; channel++)
+            mixer_ctl_set_value(adev->mixer_ctls.voice_ul_volume,
+                                channel, volume);
+    }
 
     adev->mic_mute = state;
 

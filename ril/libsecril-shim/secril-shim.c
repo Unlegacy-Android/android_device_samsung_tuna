@@ -78,14 +78,26 @@ static void patchMem(void *libHandle, bool beforeRilInit)
 	 * access to the memory region we're generally most interested in. */
 	uint8_t *hSecOem;
 
+	/* MAX_TIMEOUT is used for a call to pthread_cond_timedwait_relative_np.
+	 * The issue is bionic has switched to using absolute timeouts instead of
+	 * relative timeouts, and a maximum time value can cause an overflow in
+	 * the function converting relative to absolute timespecs if unpatched.
+	 *
+	 * By patching this to 0x01FFFFFF from 0x7FFFFFFF, the timeout should
+	 * expire in about a year rather than 68 years, and the RIL should be good
+	 * up until the year 2036 or so. */
+	uint8_t *MAX_TIMEOUT;
+
 	hSecOem = dlsym(libHandle, "hSecOem");
 	if (CC_UNLIKELY(!hSecOem)) {
 		RLOGE("%s: hSecOem could not be found!\n", __func__);
-		return;
+		/* If hSecOem is not found we can still try the other patches. */
+		goto timeout_patch;
 	}
 
 	RLOGD("%s: hSecOem found at %p!\n", __func__, hSecOem);
 
+	/* hSecOem-based patching. */
 	switch (tunaVariant) {
 		case VARIANT_MAGURO:
 			if (!beforeRilInit) {
@@ -111,6 +123,27 @@ static void patchMem(void *libHandle, bool beforeRilInit)
 			break;
 		case VARIANT_TOROPLUS:
 			break;
+	}
+
+timeout_patch:
+	/* MAX_TIMEOUT patch, works the same for all RILs. */
+	if (beforeRilInit) {
+		MAX_TIMEOUT = dlsym(libHandle, "MAX_TIMEOUT");
+		if (CC_UNLIKELY(!MAX_TIMEOUT)) {
+			RLOGE("%s: MAX_TIMEOUT could not be found!\n", __func__);
+			return;
+		}
+		RLOGD("%s: MAX_TIMEOUT found at %p!\n", __func__, MAX_TIMEOUT);
+		/* We need to patch the first byte, since we're little endian
+		 * we need to move forward 3 bytes to get that byte. */
+		MAX_TIMEOUT += 3;
+		RLOGD("%s: MAX_TIMEOUT is currently 0x%" PRIX8 "FFFFFF\n", __func__, *MAX_TIMEOUT);
+		if (CC_LIKELY(*MAX_TIMEOUT == 0x7F)) {
+			*MAX_TIMEOUT = 0x01;
+			RLOGI("%s: MAX_TIMEOUT was changed to 0x%" PRIX8 "FFFFFF\n", __func__, *MAX_TIMEOUT);
+		} else {
+			RLOGW("%s: MAX_TIMEOUT was not 0x7F; leaving alone\n", __func__);
+		}
 	}
 }
 

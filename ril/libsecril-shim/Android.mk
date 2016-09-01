@@ -11,7 +11,7 @@ LOCAL_SHARED_LIBRARIES := \
 	libril \
 	libcutils
 
-LOCAL_CFLAGS := -Wall -Werror
+LOCAL_CFLAGS := -Wall -Werror -DSHIM_UPGRADE_VERSION=7
 
 LOCAL_MODULE := libsecril-shim
 

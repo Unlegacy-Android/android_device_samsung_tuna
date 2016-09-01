@@ -2005,8 +2005,8 @@ static ssize_t read_frames(struct tuna_stream_in *in, void *buffer, ssize_t fram
 
         } else {
             struct resampler_buffer buf = {
-                    { raw : NULL, },
-                    frame_count : frames_rd,
+                    { .raw = NULL, },
+                    .frame_count = frames_rd,
             };
             get_next_buffer(&in->buf_provider, &buf);
             if (buf.raw != NULL) {

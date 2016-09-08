@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <binder/Parcel.h>
 #include <cutils/compiler.h>
 #include <cutils/properties.h>
 #include <sys/cdefs.h>
@@ -31,19 +32,19 @@ extern "C" const char * requestToString(int request);
 
 /* TODO: Do we really need to redefine these? They aren't in a header... */
 typedef struct {
-    int requestNumber;
-    void (*dispatchFunction) (void *p, void *pRI);
-    int(*responseFunction) (void *p, void *response, size_t responselen);
+	int requestNumber;
+	void (*dispatchFunction) (android::Parcel &p, struct RequestInfo *pRI);
+	int(*responseFunction) (android::Parcel &p, void *response, size_t responselen);
 } CommandInfo;
 
 typedef struct RequestInfo {
-    int32_t token;
-    CommandInfo *pCI;
-    struct RequestInfo *p_next;
-    char cancelled;
-    char local;
-    RIL_SOCKET_ID socket_id;
-    int wasAckSent;
+	int32_t token;
+	CommandInfo *pCI;
+	struct RequestInfo *p_next;
+	char cancelled;
+	char local;
+	RIL_SOCKET_ID socket_id;
+	int wasAckSent;
 } RequestInfo;
 
 #endif /* __SECRIL_SHIM_H__ */

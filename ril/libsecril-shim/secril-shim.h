@@ -27,7 +27,7 @@ enum variant_type {
 	VARIANT_UNKNOWN
 };
 
-extern const char * requestToString(int request);
+extern "C" const char * requestToString(int request);
 
 /* TODO: Do we really need to redefine these? They aren't in a header... */
 typedef struct {

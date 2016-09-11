@@ -123,54 +123,6 @@ uint_fast8_t inv_dmpkey_supported(unsigned short key)
     return TRUE;
 }
 
-/**
- *  @internal
- *  @brief  used to get the specified number of bytes from the original
- *          MPU memory location specified by the key.
- *          Reads the specified number of bytes from the MPU location
- *          that was used to program the MPU specified by the key. Each
- *          set of code specifies a function that changes keys into
- *          addresses. This function is set with setGetAddress().
- *
- *  @param  key     The key to use when looking up the address.
- *  @param  length  Number of bytes to read.
- *  @param  buffer  Result for data.
- *
- *  @return INV_SUCCESS if the command is successful, INV_ERROR otherwise. The key
- *          not corresponding to a memory address will result in INV_ERROR.
- *  @endif
- */
-inv_error_t inv_get_mpu_memory_original(unsigned short key,
-                                        unsigned short length,
-                                        unsigned char *buffer)
-{
-    unsigned short offset;
-
-    if (sGetAddress == NULL) {
-        return INV_ERROR_NOT_OPENED;
-    }
-
-    offset = sGetAddress(key);
-    if (offset >= localDmpMemorySize || (offset + length) > localDmpMemorySize) {
-        return INV_ERROR_INVALID_PARAMETER;
-    }
-
-    memcpy(buffer, &localDmpMemory[offset], length);
-
-    return INV_SUCCESS;
-}
-
-unsigned short inv_dl_get_address(unsigned short key)
-{
-    unsigned short offset;
-    if (sGetAddress == NULL) {
-        return INV_ERROR_NOT_OPENED;
-    }
-
-    offset = sGetAddress(key);
-    return offset;
-}
-
 /* ---------------------- */
 /* -  Static Functions. - */
 /* ---------------------- */
@@ -512,28 +464,6 @@ inv_error_t inv_set_full_scale(float fullScale)
             ("\tAvailable values : +/- 250 dps, +/- 500 dps, +/- 1000 dps, +/- 2000 dps\n");
         return INV_ERROR_INVALID_PARAMETER;
     }
-    mldlCfg.gyro_needs_reset = TRUE;
-
-    return INV_SUCCESS;
-}
-
-/**
- * @brief   This function sets the external sync for the MPU sampling.
- *          It can be synchronized on the LSB of any of the gyros, any of the
- *          external accels, or on the temp readings.
- *
- * @param   extSync External sync selection, 0 to 7.
- * @return  Zero if the command is successful; an error code otherwise.
-**/
-inv_error_t inv_set_external_sync(unsigned char extSync)
-{
-    INVENSENSE_FUNC_START;
-
-    /*---- do range checking ----*/
-    if (extSync >= NUM_MPU_EXT_SYNC) {
-        return INV_ERROR_INVALID_PARAMETER;
-    }
-    mldlCfg.ext_sync = extSync;
     mldlCfg.gyro_needs_reset = TRUE;
 
     return INV_SUCCESS;

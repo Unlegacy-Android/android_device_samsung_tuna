@@ -127,7 +127,6 @@ extern "C" {
     inv_error_t inv_get_dl_cfg_int(unsigned char triggers);
     inv_error_t inv_dl_cfg_sampling(unsigned char lpf, unsigned char divider);
     inv_error_t inv_set_full_scale(float fullScale);
-    inv_error_t inv_set_external_sync(unsigned char extSync);
     inv_error_t inv_set_ignore_system_suspend(unsigned char ignore);
     inv_error_t inv_clock_source(unsigned char clkSource);
     inv_error_t inv_get_mpu_memory(unsigned short key,
@@ -145,11 +144,7 @@ extern "C" {
     inv_error_t inv_set_offset(const short *offset);
 
     /* Functions for setting and retrieving the DMP memory */
-    inv_error_t inv_get_mpu_memory_original(unsigned short key,
-                                            unsigned short length,
-                                            unsigned char *buffer);
     void inv_set_get_address(unsigned short (*func) (unsigned short key));
-    unsigned short inv_dl_get_address(unsigned short key);
     uint_fast8_t inv_dmpkey_supported(unsigned short key);
 
     unsigned char inv_get_interrupt_trigger(unsigned char index);

@@ -71,7 +71,6 @@ extern "C" {
     inv_error_t inv_set_fifo_rate(unsigned short fifoRate);
     unsigned short inv_get_fifo_rate(void);
     int_fast16_t inv_get_sample_step_size_ms(void);
-    int_fast16_t inv_get_sample_frequency(void);
     long inv_decode_temperature(short tempReg);
 
     // Register callbacks after a packet of FIFO data is processed
@@ -87,10 +86,6 @@ extern "C" {
                                       uint_fast16_t accuracy);
     inv_error_t inv_send_linear_accel_in_world(uint_fast16_t elements,
                                                uint_fast16_t accuracy);
-    inv_error_t inv_send_cntrl_data(uint_fast16_t elements,
-                                    uint_fast16_t accuracy);
-    inv_error_t inv_send_sensor_data(uint_fast16_t elements,
-                                     uint_fast16_t accuracy);
     inv_error_t inv_send_external_sensor_data(uint_fast16_t elements,
                                               uint_fast16_t accuracy);
     inv_error_t inv_send_gravity(uint_fast16_t elements,
@@ -110,12 +105,9 @@ extern "C" {
     inv_error_t inv_get_linear_accel(long *data);
     inv_error_t inv_get_linear_accel_in_world(long *data);
     inv_error_t inv_get_gyro_and_accel_sensor(long *data);
-    inv_error_t inv_get_gyro_sensor(long *data);
     inv_error_t inv_get_cntrl_data(long *data);
     inv_error_t inv_get_temperature(long *data);
     inv_error_t inv_get_gravity(long *data);
-    inv_error_t inv_get_unquantized_accel(long *data);
-    inv_error_t inv_get_quantized_accel(long *data);
     inv_error_t inv_get_external_sensor_data(long *data, int size);
     inv_error_t inv_get_eis(long *data);
 
@@ -140,7 +132,6 @@ extern "C" {
     bool isUmplDataInFIFO(void);
     void setUmplDataInFIFOFlag(bool flag);
 #endif
-    uint_fast16_t inv_get_fifo_packet_size(void);
 #ifdef __cplusplus
 }
 #endif

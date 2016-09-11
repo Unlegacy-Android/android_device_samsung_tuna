@@ -478,7 +478,6 @@ struct inv_obj_t {
     /*API for detecting change of state */
      inv_error_t
         inv_set_motion_callback(void (*func) (unsigned short motion_state));
-    int inv_get_motion_state(void);
 
     inv_error_t inv_set_motion_interrupt(unsigned char on);
     inv_error_t inv_set_fifo_interrupt(unsigned char on);

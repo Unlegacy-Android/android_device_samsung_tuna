@@ -135,11 +135,14 @@
  * = 500 us at 48 kHz.  It seems to be either 48 or 96 for capture, or maybe it is because the
  * limitation is actually a min number of bytes which translates to a different amount of frames
  * according to the number of channels.
+ *
+ * Note that this is applicable to both 44.1kHz and 48kHz streams.
+ * That being said, the base frame count is actually 12, not 24.
  */
-#define ABE_BASE_FRAME_COUNT 24
+#define ABE_BASE_FRAME_COUNT 12
 
-/* Derived from MM_FULL_POWER_SAMPLING_RATE=48000 and ABE_BASE_FRAME_COUNT=24 */
-#define MULTIPLIER_FACTOR 2
+/* Derived from MM_FULL_POWER_SAMPLING_RATE=48000 and ABE_BASE_FRAME_COUNT=12 */
+#define MULTIPLIER_FACTOR 4
 
 
 /* number of base blocks in a short period (low latency) */
@@ -151,10 +154,7 @@
 /* number of base blocks in a short deep buffer period (screen on) */
 #define DEEP_BUFFER_SHORT_PERIOD_MULTIPLIER (DEEP_BUFFER_SHORT_PERIOD_MS * MULTIPLIER_FACTOR)
 /* number of frames per short deep buffer period (screen on) */
-/* previously, this was (ABE_BASE_FRAME_COUNT * DEEP_BUFFER_SHORT_PERIOD_MULTIPLIER), but with the transition to
- * 44.1kHz streams it seems that our ABE_BASE_FRAME_COUNT is actually now 22.05, but we need a whole number here.
- * Easiest way to do so, 22.05 * 40 = 882. So just set this to 882. */
-#define DEEP_BUFFER_SHORT_PERIOD_SIZE 882
+#define DEEP_BUFFER_SHORT_PERIOD_SIZE (ABE_BASE_FRAME_COUNT * DEEP_BUFFER_SHORT_PERIOD_MULTIPLIER)
 /* number of periods for deep buffer playback (screen on) */
 #define PLAYBACK_DEEP_BUFFER_SHORT_PERIOD_COUNT 4
 

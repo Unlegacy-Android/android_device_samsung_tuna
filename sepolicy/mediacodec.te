@@ -1,0 +1,2 @@
+# mediacodec
+allow mediacodec rpmsg_device:chr_file { ioctl open read write };

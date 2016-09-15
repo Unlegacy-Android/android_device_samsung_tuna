@@ -209,7 +209,7 @@ Value* GetTunaVariant(const char* name, State* state, int argc, Expr* argv[] __u
 
         if (strstr(cmdline, "I9250") != NULL || /* Most maguro variants. */
             strstr(cmdline, "M420")  != NULL || /* South Korea / East Asia? */
-            strstr(cmdline, "SCO4D") != NULL    /* Japan / Pacific Asia? */
+            strstr(cmdline, "SC04D") != NULL    /* Japan / Pacific Asia? */
             ) {
             variant = VARIANT_MAGURO;
             goto out;

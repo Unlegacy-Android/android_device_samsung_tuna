@@ -84,7 +84,7 @@ mount -o remount,rw /system
 variant=""
 cmdline=$(cat /proc/cmdline)
 
-if [ -z "${cmdline##*I9250*}" ] || [ -z "${cmdline##*M420*}" ] || [ -z "${cmdline##*SCO4D*}" ] ;then
+if [ -z "${cmdline##*I9250*}" ] || [ -z "${cmdline##*M420*}" ] || [ -z "${cmdline##*SC04D*}" ] ;then
     variant="maguro"
     move_maguro_files
     delete_torocommon_files

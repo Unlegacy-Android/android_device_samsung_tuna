@@ -87,9 +87,7 @@ PRODUCT_COPY_FILES += \
 
 # Symlinks
 PRODUCT_PACKAGES += \
-	libion.so
-
-PRODUCT_PACKAGES += \
+	libpn544_fw.so \
 	tuna_hdcp_keys
 
 # Init files

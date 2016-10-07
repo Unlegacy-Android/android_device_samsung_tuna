@@ -111,17 +111,11 @@ BOARD_SEPOLICY_DIRS += \
 BOARD_SEPOLICY_UNION += \
 	genfs_contexts \
 	file_contexts \
+	device.te \
 	dumpdcc.te \
-	init.te \
-	mediaserver.te \
 	pvrsrvinit.te \
-	rild.te \
-	bluetooth.te \
-	sdcardd.te \
-	servicemanager.te \
-	system_server.te \
-	zygote.te \
-	vold.te
+	init.te \
+	file.te
 
 # Recovery
 RECOVERY_FSTAB_VERSION := 2

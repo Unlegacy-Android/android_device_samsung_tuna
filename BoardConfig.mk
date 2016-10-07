@@ -31,7 +31,7 @@ TARGET_OTA_ASSERT_DEVICE := tuna,,maguro,toro,toroplus
 # Kernel
 BOARD_KERNEL_BASE := 0x80000000
 # BOARD_KERNEL_CMDLINE :=
-TARGET_KERNEL_CONFIG := tuna_defconfig
+TARGET_KERNEL_CONFIG := tuna_kitkat_defconfig
 TARGET_KERNEL_SOURCE := kernel/samsung/tuna
 
 # External SGX Module

@@ -352,11 +352,8 @@ inv_error_t inv_setup_dmp(void)
         LOG_RESULT_LOCATION(result);
         return result;
     }
-    result = inv_set_ignore_system_suspend(FALSE);
-    if (result) {
-        LOG_RESULT_LOCATION(result);
-        return result;
-    }
+    /* inv_set_ignore_system_suspend always returns success */
+    inv_set_ignore_system_suspend(FALSE);
 
     if (inv_accel_present())
     {

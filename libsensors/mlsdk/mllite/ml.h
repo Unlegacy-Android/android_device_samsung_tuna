@@ -382,98 +382,31 @@ struct inv_obj_t {
     /*API for handling the buffer */
     inv_error_t inv_update_data(void);
 
-    /*API for handling polling */
-    int inv_check_flag(int flag);
-
     /*API for setting bias update function */
     inv_error_t inv_set_bias_update(unsigned short biasFunction);
 
-    /* Legacy functions for handling augmented data*/
-    inv_error_t inv_get_array(int dataSet, long *data);
-    inv_error_t inv_get_float_array(int dataSet, float *data);
     /* Individual functions for augmented data, per specific dataset */
-
 
     inv_error_t inv_get_gyro(long *data);
     inv_error_t inv_get_accel(long *data);
-    inv_error_t inv_get_temperature(long *data);
-    inv_error_t inv_get_temperature_raw(short *data);
-    inv_error_t inv_get_rot_mat(long *data);
     inv_error_t inv_get_quaternion(long *data);
     inv_error_t inv_get_linear_accel(long *data);
-    inv_error_t inv_get_linear_accel_in_world(long *data);
     inv_error_t inv_get_gravity(long *data);
-    inv_error_t inv_get_angular_velocity(long *data);
-    inv_error_t inv_get_euler_angles(long *data);
-    inv_error_t inv_get_euler_angles_x(long *data);
-    inv_error_t inv_get_euler_angles_y(long *data);
-    inv_error_t inv_get_euler_angles_z(long *data);
-    inv_error_t inv_get_gyro_temp_slope(long *data);
-    inv_error_t inv_get_gyro_bias(long *data);
-    inv_error_t inv_get_accel_bias(long *data);
-    inv_error_t inv_get_mag_bias(long *data);
-    inv_error_t inv_get_gyro_and_accel_sensor(long *data);
-    inv_error_t inv_get_mag_raw_data(long *data);
-    inv_error_t inv_get_magnetometer(long *data);
-    inv_error_t inv_get_pressure(long *data);
-    inv_error_t inv_get_heading(long *data);
-    inv_error_t inv_get_gyro_cal_matrix(long *data);
-    inv_error_t inv_get_accel_cal_matrix(long *data);
-    inv_error_t inv_get_mag_cal_matrix(long *data);
-    inv_error_t inv_get_mag_bias_error(long *data);
-    inv_error_t inv_get_mag_scale(long *data);
-    inv_error_t inv_get_local_field(long *data);
-    inv_error_t inv_get_relative_quaternion(long *data);
     inv_error_t inv_get_gyro_float(float *data);
     inv_error_t inv_get_accel_float(float *data);
-    inv_error_t inv_get_temperature_float(float *data);
     inv_error_t inv_get_rot_mat_float(float *data);
     inv_error_t inv_get_quaternion_float(float *data);
     inv_error_t inv_get_linear_accel_float(float *data);
-    inv_error_t inv_get_linear_accel_in_world_float(float *data);
     inv_error_t inv_get_gravity_float(float *data);
-    inv_error_t inv_get_angular_velocity_float(float *data);
-    inv_error_t inv_get_euler_angles_float(float *data);
-    inv_error_t inv_get_euler_angles_x_float(float *data);
-    inv_error_t inv_get_euler_angles_y_float(float *data);
-    inv_error_t inv_get_euler_angles_z_float(float *data);
-    inv_error_t inv_get_gyro_temp_slope_float(float *data);
-    inv_error_t inv_get_gyro_bias_float(float *data);
-    inv_error_t inv_get_accel_bias_float(float *data);
-    inv_error_t inv_get_mag_bias_float(float *data);
-    inv_error_t inv_get_gyro_and_accel_sensor_float(float *data);
-    inv_error_t inv_get_mag_raw_data_float(float *data);
     inv_error_t inv_get_magnetometer_float(float *data);
-    inv_error_t inv_get_pressure_float(float *data);
-    inv_error_t inv_get_heading_float(float *data);
-    inv_error_t inv_get_gyro_cal_matrix_float(float *data);
-    inv_error_t inv_get_accel_cal_matrix_float(float *data);
-    inv_error_t inv_get_mag_cal_matrix_float(float *data);
-    inv_error_t inv_get_mag_bias_error_float(float *data);
-    inv_error_t inv_get_mag_scale_float(float *data);
-    inv_error_t inv_get_local_field_float(float *data);
-    inv_error_t inv_get_relative_quaternion_float(float *data);
     inv_error_t inv_get_compass_accuracy(int *accuracy);
-    inv_error_t inv_set_gyro_bias(long *data);
     inv_error_t inv_set_accel_bias(long *data);
-    inv_error_t inv_set_mag_bias(long *data);
     inv_error_t inv_set_gyro_temp_slope(long *data);
-    inv_error_t inv_set_local_field(long *data);
-    inv_error_t inv_set_mag_scale(long *data);
-    inv_error_t inv_set_gyro_temp_slope_float(float *data);
-    inv_error_t inv_set_gyro_bias_float(float *data);
-    inv_error_t inv_set_accel_bias_float(float *data);
-    inv_error_t inv_set_mag_bias_float(float *data);
-    inv_error_t inv_set_local_field_float(float *data);
-    inv_error_t inv_set_mag_scale_float(float *data);
 
     inv_error_t inv_apply_endian_accel(void);
     inv_error_t inv_apply_calibration(void);
-    inv_error_t inv_set_gyro_calibration(float range, signed char *orientation);
     inv_error_t inv_set_accel_calibration(float range,
                                           signed char *orientation);
-    inv_error_t inv_set_compass_calibration(float range,
-                                            signed char *orientation);
 
     /*API for detecting change of state */
      inv_error_t
@@ -485,20 +418,11 @@ struct inv_obj_t {
     /* Simulated DMP */
     int inv_get_gyro_present(void);
 
-    inv_error_t inv_set_no_motion_time(float time);
-    inv_error_t inv_set_no_motion_thresh(float thresh);
-    inv_error_t inv_set_no_motion_threshAccel(long thresh);
     inv_error_t inv_reset_motion(void);
-
-    inv_error_t inv_set_dead_zone(void);
-    void inv_start_bias_calc(void);
-    void inv_stop_bias_calc(void);
 
     // Private functions shared accross modules
     void inv_init_ml(void);
 
-    inv_error_t inv_register_dmp_interupt_cb(inv_obj_func func);
-    inv_error_t inv_unregister_dmp_interupt_cb(inv_obj_func func);
     void inv_run_dmp_interupt_cb(void);
     void inv_set_mode_change(inv_error_t(*mode_change_func)
                               (unsigned long, unsigned long));

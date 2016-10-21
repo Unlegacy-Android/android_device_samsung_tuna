@@ -101,46 +101,7 @@ inv_error_t inv_set_gyro_bias_in_hw_unit(const short *bias, int mode)
     return INV_SUCCESS;
 }
 
-/** Records gyro biases
-* @param[in] bias Bias where 1dps is 2^16. In chip frame.
-*/
-inv_error_t inv_set_gyro_bias_in_dps(const long *bias, int mode)
-{
-    struct mldl_cfg *mldl_cfg = inv_get_dl_config();
-    int sf, i;
-    long biasTmp;
-    short offset[3];
-    inv_error_t result;
-
-    if (mldl_cfg->gyro_sens_trim != 0) {
-        sf = 2000 * 131 / mldl_cfg->gyro_sens_trim;
-    } else {
-        sf = 2000;
-    }
-
-    for (i = 0; i < GYRO_NUM_AXES; i++) {
-        biasTmp = -bias[i] / sf;
-        if (biasTmp < 0)
-            biasTmp += 65536L;
-        offset[i] = (short)biasTmp;
-    }
-    result = inv_set_gyro_bias_in_hw_unit(offset, mode);
-    return result;
-}
-
-inv_error_t inv_set_gyro_bias_in_dps_float(const float *bias, int mode)
-{
-    long biasL[3];
-    inv_error_t result;
-
-    biasL[0] = (long)(bias[0] * (1L << 16));
-    biasL[1] = (long)(bias[1] * (1L << 16));
-    biasL[2] = (long)(bias[2] * (1L << 16));
-    result = inv_set_gyro_bias_in_dps(biasL, mode);
-    return result;
-}
-
-inv_error_t MLSetGyroBiasCB(struct inv_obj_t * inv_obj)
+static inv_error_t MLSetGyroBiasCB(struct inv_obj_t * inv_obj)
 {
     inv_error_t result = INV_SUCCESS;
     if (sgb.needToSetBias) {

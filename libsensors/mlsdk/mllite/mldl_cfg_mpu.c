@@ -55,7 +55,8 @@
 /* ---------------------- */
 /* -  Static Functions. - */
 /* ---------------------- */
-void mpu_print_cfg(struct mldl_cfg * mldl_cfg)
+#if 0
+static void mpu_print_cfg(struct mldl_cfg * mldl_cfg)
 {
     struct mpu_platform_data   *pdata   = mldl_cfg->pdata;
     struct ext_slave_platform_data *accel   = &mldl_cfg->pdata->accel;
@@ -178,6 +179,7 @@ void mpu_print_cfg(struct mldl_cfg * mldl_cfg)
              sizeof(struct mpu_platform_data),
              offsetof(struct mldl_cfg, ram));
 }
+#endif
 
 /******************************************************************************
  ******************************************************************************
@@ -345,13 +347,9 @@ int inv_mpu_slave_read(struct mldl_cfg *mldl_cfg,
     case EXT_SLAVE_TYPE_COMPASS:
         result = ioctl((int)(uintptr_t)gyro_handle, MPU_READ_COMPASS, data);
         break;
-    case EXT_SLAVE_TYPE_PRESSURE:
-        result = ioctl((int)(uintptr_t)gyro_handle, MPU_READ_PRESSURE, data);
-        break;
     default:
         LOG_RESULT_LOCATION(INV_ERROR_INVALID_PARAMETER);
         return INV_ERROR_INVALID_PARAMETER;
-        break;
     }
 
     return result;
@@ -397,17 +395,9 @@ int inv_mpu_slave_config(struct mldl_cfg *mldl_cfg,
             return result;
         }
         break;
-    case EXT_SLAVE_TYPE_PRESSURE:
-        result = ioctl((int)(uintptr_t)gyro_handle, MPU_CONFIG_PRESSURE, data);
-        if (result) {
-            LOG_RESULT_LOCATION(result);
-            return result;
-        }
-        break;
     default:
         LOG_RESULT_LOCATION(INV_ERROR_INVALID_PARAMETER);
         return INV_ERROR_INVALID_PARAMETER;
-        break;
     }
 
     return result;
@@ -455,17 +445,9 @@ int inv_mpu_get_slave_config(struct mldl_cfg *mldl_cfg,
             return result;
         }
         break;
-    case EXT_SLAVE_TYPE_PRESSURE:
-        result = ioctl((int)(uintptr_t)gyro_handle, MPU_GET_CONFIG_PRESSURE, data);
-        if (result) {
-            LOG_RESULT_LOCATION(result);
-            return result;
-        }
-        break;
     default:
         LOG_RESULT_LOCATION(INV_ERROR_INVALID_PARAMETER);
         return INV_ERROR_INVALID_PARAMETER;
-        break;
     }
     return result;
 }

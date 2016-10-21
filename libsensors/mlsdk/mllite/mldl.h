@@ -122,8 +122,6 @@ extern "C" {
 
     inv_error_t inv_init_requested_sensors(unsigned long sensors);
     unsigned char inv_get_mpu_slave_addr(void);
-    inv_error_t inv_get_dl_ctrl_dmp(unsigned char enableRun,
-                                    unsigned char enableFIFO);
     inv_error_t inv_get_dl_cfg_int(unsigned char triggers);
     inv_error_t inv_dl_cfg_sampling(unsigned char lpf, unsigned char divider);
     inv_error_t inv_set_full_scale(float fullScale);
@@ -139,7 +137,6 @@ extern "C" {
                              unsigned short length,
                              unsigned short startAddress);
 
-    unsigned char inv_get_slicon_rev(void);
     inv_error_t inv_set_offsetTC(const unsigned char *tc);
     inv_error_t inv_set_offset(const short *offset);
 

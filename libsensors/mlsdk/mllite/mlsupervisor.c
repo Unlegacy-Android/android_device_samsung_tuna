@@ -66,7 +66,7 @@ static int disturbtimerstart = 0;
 static yas_filter_if_s f;
 static yas_filter_handle_t handle;
 
-#define SUPERVISOR_DEBUG 0
+//#define SUPERVISOR_DEBUG
 
 struct inv_supervisor_cb_obj ml_supervisor_cb = { NULL, NULL, NULL, NULL, NULL };
 
@@ -368,18 +368,14 @@ inv_error_t inv_accel_compass_supervisor(void)
         long long tmp64 = 0;
         unsigned long ctime = inv_get_tick_count();
         if (polltime == 0 || ((ctime - polltime) > 20)) { // 50Hz max
-            if (SUPERVISOR_DEBUG) {
+#ifdef SUPERVISOR_DEBUG
                 MPL_LOGV("Fetch compass data from inv_process_fifo_packet\n");
                 MPL_LOGV("delta time = %ld\n", ctime - polltime);
-            }
+#endif
             polltime = ctime;
             result = inv_get_compass_data(magSensorData);
             /* external slave wants the data even if there is an error */
-            if (result && !inv_obj.external_slave_callback) {
-                if (SUPERVISOR_DEBUG) {
-                    MPL_LOGW("inv_get_compass_data returned %d\n", result);
-                }
-            } else {
+            if (!(result && !inv_obj.external_slave_callback)) {
                 unsigned long compassTime = inv_get_tick_count();
                 unsigned long deltaTime = 1;
 
@@ -469,7 +465,7 @@ inv_error_t inv_accel_compass_supervisor(void)
                 inv_obj.compass_calibrated_data[2] = (long)(fcout[2]*65536.f/1000.f);
 #endif
 
-                if (SUPERVISOR_DEBUG) {
+#ifdef SUPERVISOR_DEBUG
                     MPL_LOGI("RM : %+10.6f %+10.6f %+10.6f\n",
                              (float)inv_obj.compass_calibrated_data[0] /
                              65536.f,
@@ -477,7 +473,7 @@ inv_error_t inv_accel_compass_supervisor(void)
                              65536.f,
                              (float)inv_obj.compass_calibrated_data[2] /
                              65536.f);
-                }
+#endif
                 magFB = 1.0;
                 adjustSensorFusion = 1;
                 result = MLSensorFusionSupervisor(&magFB, &accSF, deltaTime);
@@ -486,6 +482,11 @@ inv_error_t inv_accel_compass_supervisor(void)
                     return result;
                 }
             }
+#ifdef SUPERVISOR_DEBUG
+            else {
+                    MPL_LOGW("inv_get_compass_data returned %d\n", result);
+            }
+#endif
         }
     } else {
         //No compass, but still modify accel

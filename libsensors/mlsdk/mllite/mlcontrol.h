@@ -173,17 +173,6 @@ extern "C" {
 
     };
 
-    /* --------------------- */
-    /* - Function p-types. - */
-    /* --------------------- */
-
-    /**************************************************************************/
-    /* ML Control Functions.                                                  */
-    /**************************************************************************/
-
-    /*API for handling control signals */
-    inv_error_t inv_get_control_data(long *controlSignal, long *gridNum,
-                                     long *gridChange);
 
 #ifdef __cplusplus
 }

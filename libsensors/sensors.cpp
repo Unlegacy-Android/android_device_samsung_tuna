@@ -72,9 +72,6 @@
 #define SENSORS_PROXIMITY_HANDLE        (ID_P)
 #define SENSORS_PRESSURE_HANDLE         (ID_PR)
 #define SENSORS_TEMPERATURE_HANDLE      (ID_T)
-#define AKM_FTRACE 0
-#define AKM_DEBUG 0
-#define AKM_DATA 0
 
 /*****************************************************************************/
 

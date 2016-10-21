@@ -49,13 +49,6 @@ extern "C" {
     inv_error_t inv_load_calibration(void);
     inv_error_t inv_store_calibration(void);
 
-/*
-    Other prototypes
-*/
-    inv_error_t inv_load_cal(unsigned char *calData);
-    inv_error_t inv_store_cal(unsigned char *calData, int length);
-    unsigned int inv_get_cal_length(void);
-
 #ifdef __cplusplus
 }
 #endif

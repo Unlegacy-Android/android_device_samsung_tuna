@@ -1,17 +1,12 @@
 /**
  * mlcompat! where symbols referenced by libinvensense_mpl.so go to die. :(
- * They may one day rise again, e.g. inv_get_motion_state looks fun, but
+ * They may one day rise again, e.g. inv_get_motion_state looked fun, but
  * this helps keep track of where things are used and by whom are they used.
  */
 #include "mlcompat.h"
 #include "ml.h"
 #include "mlMathFunc.h"
 #include "mlmath.h"
-
-inv_error_t inv_pressure_supervisor(void)
-{
-    return INV_SUCCESS;
-}
 
 void inv_q_multf(const float *q1, const float *q2, float *qProd)
 {
@@ -115,12 +110,17 @@ double inv_matrix_detd(double *p, int *n)
 }
 
 
+__attribute__((noinline))
 static inv_error_t log_call_error(const char *functionName)
 {
     ALOGE("%s: Why are we being called?!", functionName);
     return INV_ERROR_INVALID_PARAMETER;
 }
 
+inv_error_t inv_pressure_supervisor()
+{
+    return log_call_error(__func__);
+}
 
 int inv_get_motion_state()
 {
@@ -143,9 +143,7 @@ inv_error_t inv_get_float_array(int dataSet __unused, float *data __unused)
     return log_call_error(__func__);
 }
 
-inv_error_t inv_get_mpu_memory_original(unsigned short key __unused,
-                                        unsigned short length __unused,
-                                        unsigned char *buffer __unused)
+inv_error_t inv_get_mpu_memory_original(unsigned short key __unused, unsigned short length __unused, unsigned char *buffer __unused)
 {
     return log_call_error(__func__);
 }
@@ -181,14 +179,22 @@ inv_error_t inv_get_gyro_sensor(long *data __unused)
     return log_call_error(__func__);
 }
 
-inv_error_t inv_send_sensor_data(uint_fast16_t elements __unused,
-                                 uint_fast16_t accuracy __unused)
+inv_error_t inv_send_packet_number(uint_fast16_t accuracy __unused)
 {
     return log_call_error(__func__);
 }
 
-inv_error_t inv_send_cntrl_data(uint_fast16_t elements __unused,
-                                uint_fast16_t accuracy __unused)
+inv_error_t inv_send_sensor_data(uint_fast16_t elements __unused, uint_fast16_t accuracy __unused)
+{
+    return log_call_error(__func__);
+}
+
+inv_error_t inv_send_cntrl_data(uint_fast16_t elements __unused, uint_fast16_t accuracy __unused)
+{
+    return log_call_error(__func__);
+}
+
+inv_error_t inv_send_quantized_accel(uint_fast16_t elements __unused, uint_fast16_t accuracy __unused)
 {
     return log_call_error(__func__);
 }
@@ -197,4 +203,34 @@ uint_fast16_t inv_get_fifo_packet_size()
 {
     log_call_error(__func__);
     return 0;
+}
+
+inv_error_t inv_get_eis(long *data __unused)
+{
+    return log_call_error(__func__);
+}
+
+inv_error_t inv_get_temperature(long *data __unused)
+{
+    return log_call_error(__func__);
+}
+
+inv_error_t inv_get_control_data(long *controlSignal __unused, long *gridNum __unused, long *gridChange __unused)
+{
+    return log_call_error(__func__);
+}
+
+inv_error_t inv_set_gyro_bias_in_dps(const long *bias __unused, int mode __unused)
+{
+    return log_call_error(__func__);
+}
+
+inv_error_t inv_set_gyro_bias_in_dps_float(const float *bias __unused, int mode __unused)
+{
+    return log_call_error(__func__);
+}
+
+inv_error_t inv_get_linear_accel_in_world(long *data __unused)
+{
+    return log_call_error(__func__);
 }

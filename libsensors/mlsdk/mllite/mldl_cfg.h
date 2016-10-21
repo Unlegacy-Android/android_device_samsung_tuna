@@ -178,21 +178,6 @@ static inline int inv_mpu_read_compass(struct mldl_cfg *mldl_cfg,
 				  data);
 }
 
-static inline int inv_mpu_read_pressure(struct mldl_cfg *mldl_cfg,
-					void *gyro_handle,
-					void *pressure_handle,
-					unsigned char *data)
-{
-	if (!mldl_cfg || !(mldl_cfg->pdata)) {
-		LOG_RESULT_LOCATION(INV_ERROR_INVALID_PARAMETER);
-		return INV_ERROR_INVALID_PARAMETER;
-	}
-
-	return inv_mpu_slave_read(mldl_cfg, gyro_handle, pressure_handle,
-				  mldl_cfg->pressure,
-				  &mldl_cfg->pdata->pressure, data);
-}
-
 /* Slave Config functions */
 int inv_mpu_slave_config(struct mldl_cfg *mldl_cfg,
 			 void *gyro_handle,
@@ -227,21 +212,6 @@ static inline int inv_mpu_config_compass(struct mldl_cfg *mldl_cfg,
 	return inv_mpu_slave_config(mldl_cfg, gyro_handle, compass_handle, data,
 				    mldl_cfg->compass,
 				    &mldl_cfg->pdata->compass);
-}
-
-static inline int inv_mpu_config_pressure(struct mldl_cfg *mldl_cfg,
-					  void *gyro_handle,
-					  void *pressure_handle,
-					  struct ext_slave_config *data)
-{
-	if (!mldl_cfg || !(mldl_cfg->pdata)) {
-		LOG_RESULT_LOCATION(INV_ERROR_INVALID_PARAMETER);
-		return INV_ERROR_INVALID_PARAMETER;
-	}
-
-	return inv_mpu_slave_config(mldl_cfg, gyro_handle, pressure_handle,
-				    data, mldl_cfg->pressure,
-				    &mldl_cfg->pdata->pressure);
 }
 
 /* Slave get config functions */
@@ -280,22 +250,6 @@ static inline int inv_mpu_get_compass_config(struct mldl_cfg *mldl_cfg,
 	return inv_mpu_get_slave_config(mldl_cfg, gyro_handle, compass_handle,
 					data, mldl_cfg->compass,
 					&mldl_cfg->pdata->compass);
-}
-
-static inline int inv_mpu_get_pressure_config(struct mldl_cfg *mldl_cfg,
-					      void *gyro_handle,
-					      void *pressure_handle,
-					      struct ext_slave_config *data)
-{
-	if (!mldl_cfg || !(mldl_cfg->pdata)) {
-		LOG_RESULT_LOCATION(INV_ERROR_INVALID_PARAMETER);
-		return INV_ERROR_INVALID_PARAMETER;
-	}
-
-	return inv_mpu_get_slave_config(mldl_cfg, gyro_handle,
-					pressure_handle, data,
-					mldl_cfg->pressure,
-					&mldl_cfg->pdata->pressure);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -322,30 +322,6 @@ unsigned char inv_get_mpu_slave_addr(void)
 }
 
 /**
- *  @internal
- * @brief   MLDLCfgDMP configures the Digital Motion Processor internal to
- *          the MPU. The DMP can be enabled or disabled and the start address
- *          can be set.
- *
- * @param   enableRun   Enables the DMP processing if set to TRUE.
- * @param   enableFIFO  Enables DMP output to the FIFO if set to TRUE.
- * @param   startAddress start address
- *
- * @return  Zero if the command is successful, an error code otherwise.
-*/
-inv_error_t inv_get_dl_ctrl_dmp(unsigned char enableRun,
-                                unsigned char enableFIFO)
-{
-    INVENSENSE_FUNC_START;
-
-    mldlCfg.dmp_enable = enableRun;
-    mldlCfg.fifo_enable = enableFIFO;
-    mldlCfg.gyro_needs_reset = TRUE;
-
-    return INV_SUCCESS;
-}
-
-/**
  * @brief   inv_get_dl_cfg_int configures the interrupt function on the specified pin.
  *          The basic interrupt signal characteristics can be set
  *          (i.e. active high/low, open drain/push pull, etc.) and the

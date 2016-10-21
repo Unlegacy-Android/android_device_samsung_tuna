@@ -59,17 +59,8 @@ typedef uintptr_t HANDLE; // TODO: shouldn't this be pthread_mutex_t* ???
 	/* --------------------- */
 
 #ifndef __KERNEL__
+#include <stdlib.h>
 #include <string.h>
-	void *inv_malloc(unsigned int numBytes);
-	inv_error_t inv_free(void *ptr);
-	inv_error_t inv_create_mutex(HANDLE *mutex);
-	inv_error_t inv_lock_mutex(HANDLE mutex);
-	inv_error_t inv_unlock_mutex(HANDLE mutex);
-	FILE *inv_fopen(char *filename);
-	void inv_fclose(FILE *fp);
-
-	inv_error_t inv_destroy_mutex(HANDLE handle);
-
 	void inv_sleep(int mSecs);
 	unsigned long inv_get_tick_count(void);
 
@@ -78,18 +69,18 @@ typedef uintptr_t HANDLE; // TODO: shouldn't this be pthread_mutex_t* ???
 	static inline void *kmalloc(size_t size,
 				    unsigned int gfp_flags __unused)
 	{
-		return inv_malloc((unsigned int)size);
+		return malloc((unsigned int)size);
 	}
 	static inline void *kzalloc(size_t size, unsigned int gfp_flags __unused)
 	{
-		void *tmp = inv_malloc((unsigned int)size);
+		void *tmp = malloc((unsigned int)size);
 		if (tmp)
 			memset(tmp, 0, size);
 		return tmp;
 	}
 	static inline void kfree(void *ptr)
 	{
-		inv_free(ptr);
+		free(ptr);
 	}
 	static inline void msleep(long msecs)
 	{

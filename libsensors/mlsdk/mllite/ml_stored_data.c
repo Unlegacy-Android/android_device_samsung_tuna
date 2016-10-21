@@ -31,6 +31,7 @@
  *                Typically, these functions process stored calibration data.
  */
 
+#include <stdlib.h>
 #include "ml_stored_data.h"
 #include "ml.h"
 #include "mlFIFO.h"
@@ -60,22 +61,20 @@ typedef inv_error_t(*tMLLoadFunc) (unsigned char *, unsigned short);
 */
 extern struct inv_obj_t inv_obj;
 
-/*
-    Debugging Definitions
-    set LOADCAL_DEBUG and/or STORECAL_DEBUG to 1 print the fields
-    being read or stored in human-readable format.
-    When set to 0, the compiler will optimize and remove the printouts
-    from the code.
-*/
-#define LOADCAL_DEBUG    0
-#define STORECAL_DEBUG   0
+//#define LOADCAL_DEBUG
+//#define STORECAL_DEBUG
 
-#define LOADCAL_LOG(...)                        \
-    if(LOADCAL_DEBUG)                           \
-        MPL_LOGI("LOADCAL: " __VA_ARGS__)
-#define STORECAL_LOG(...)                       \
-    if(STORECAL_DEBUG)                          \
-        MPL_LOGI("STORECAL: " __VA_ARGS__)
+#ifdef LOADCAL_DEBUG
+#define LOADCAL_LOG(...) MPL_LOGI("LOADCAL: " __VA_ARGS__)
+#else
+#define LOADCAL_LOG(...)
+#endif
+
+#ifdef STORECAL_DEBUG
+#define STORECAL_LOG(...) MPL_LOGI("STORECAL: " __VA_ARGS__)
+#else
+#define STORECAL_LOG(...)
+#endif
 
 /**
  *  @brief  Duplicate of the inv_temp_comp_find_bin function in the libmpl
@@ -84,7 +83,7 @@ extern struct inv_obj_t inv_obj;
  *  @param  temp
  *              the temperature (1 count == 1 degree C).
  */
-int FindTempBin(float temp)
+static int FindTempBin(float temp)
 {
     int bin = (int)((temp - MIN_TEMP) / TEMP_PER_BIN);
     if (bin < 0)
@@ -108,7 +107,7 @@ int FindTempBin(float temp)
  *
  * @return  the length of the internal calibrated data format.
  */
-unsigned int inv_get_cal_length(void)
+static unsigned int inv_get_cal_length(void)
 {
     INVENSENSE_FUNC_START;
     unsigned int length;
@@ -150,7 +149,7 @@ unsigned int inv_get_cal_length(void)
  *
  *  @return INV_SUCCESS if successful, a non-zero error code otherwise.
  */
-inv_error_t inv_load_cal_V0(unsigned char *calData, unsigned short len)
+static inv_error_t inv_load_cal_V0(unsigned char *calData, unsigned short len)
 {
     INVENSENSE_FUNC_START;
     const short expLen = 18;
@@ -254,7 +253,7 @@ inv_error_t inv_load_cal_V0(unsigned char *calData, unsigned short len)
  *
  *  @return INV_SUCCESS if successful, a non-zero error code otherwise.
  */
-inv_error_t inv_load_cal_V1(unsigned char *calData, unsigned short len)
+static inv_error_t inv_load_cal_V1(unsigned char *calData, unsigned short len)
 {
     INVENSENSE_FUNC_START;
     const short expLen = 24;
@@ -385,7 +384,7 @@ inv_error_t inv_load_cal_V1(unsigned char *calData, unsigned short len)
  *
  *  @return INV_SUCCESS if successful, a non-zero error code otherwise.
  */
-inv_error_t inv_load_cal_V2(unsigned char *calData, unsigned short len)
+static inv_error_t inv_load_cal_V2(unsigned char *calData, unsigned short len)
 {
     INVENSENSE_FUNC_START;
     const short expLen = 2222;
@@ -539,7 +538,7 @@ inv_error_t inv_load_cal_V2(unsigned char *calData, unsigned short len)
  *
  *  @return INV_SUCCESS if successful, a non-zero error code otherwise.
  */
-inv_error_t inv_load_cal_V3(unsigned char *calData, unsigned short len)
+static inv_error_t inv_load_cal_V3(unsigned char *calData, unsigned short len)
 {
     INVENSENSE_FUNC_START;
     union doubleToLongLong {
@@ -769,7 +768,7 @@ inv_error_t inv_load_cal_V3(unsigned char *calData, unsigned short len)
  *
  *  @return INV_SUCCESS if successful, a non-zero error code otherwise.
  */
-inv_error_t inv_load_cal_V4(unsigned char *calData, unsigned short len)
+static inv_error_t inv_load_cal_V4(unsigned char *calData, unsigned short len)
 {
     INVENSENSE_FUNC_START;
     union doubleToLongLong {
@@ -1054,7 +1053,7 @@ inv_error_t inv_load_cal_V4(unsigned char *calData, unsigned short len)
  *
  *  @return INV_SUCCESS if successful, a non-zero error code otherwise.
  */
-inv_error_t inv_load_cal_V5(unsigned char *calData, unsigned short len)
+static inv_error_t inv_load_cal_V5(unsigned char *calData, unsigned short len)
 {
     INVENSENSE_FUNC_START;
     const short expLen = 36;
@@ -1158,7 +1157,7 @@ inv_error_t inv_load_cal_V5(unsigned char *calData, unsigned short len)
  *
  * @return  INV_SUCCESS if successful, a non-zero error code otherwise.
  */
-inv_error_t inv_load_cal(unsigned char *calData)
+static inv_error_t inv_load_cal(unsigned char *calData)
 {
     INVENSENSE_FUNC_START;
     int calType = 0;
@@ -1215,6 +1214,36 @@ inv_error_t inv_load_cal(unsigned char *calData)
 }
 
 /**
+ *  @brief  inv_get_accel_bias is used to get the accelerometer baises.
+ *          The argument array elements are ordered X,Y,Z.
+ *          The values are scaled such that 1 g (gravity) = 2^16 LSBs.
+ *
+ *  @pre    MLDmpOpen() \ifnot UMPL or MLDmpPedometerStandAloneOpen() \endif
+ *          must have been called.
+ *
+ *  @param  data
+ *              A pointer to an array to be passed back to the user.
+ *              <b>Must be 3 cells long </b>.
+ *
+ *  @return Zero if the command is successful; an ML error code otherwise.
+ */
+static inv_error_t inv_get_accel_bias(long *data)
+{
+    inv_error_t result = INV_SUCCESS;
+    if (inv_get_state() < INV_STATE_DMP_OPENED)
+        return INV_ERROR_SM_IMPROPER_STATE;
+
+    if (NULL == data) {
+        return INV_ERROR_INVALID_PARAMETER;
+    }
+    data[0] = inv_obj.accel_bias[0];
+    data[1] = inv_obj.accel_bias[1];
+    data[2] = inv_obj.accel_bias[2];
+
+    return result;
+}
+
+/**
  *  @brief  Stores a set of calibration data.
  *          It generates a binary data set containing calibration data.
  *          The binary data set is intended to be stored into a file.
@@ -1228,7 +1257,7 @@ inv_error_t inv_load_cal(unsigned char *calData)
  *
  *  @return INV_SUCCESS if successful, a non-zero error code otherwise.
  */
-inv_error_t inv_store_cal(unsigned char *calData, int length)
+static inv_error_t inv_store_cal(unsigned char *calData, int length)
 {
     INVENSENSE_FUNC_START;
     int ptr = 0;
@@ -1506,7 +1535,7 @@ inv_error_t inv_load_calibration(void)
                  "error %d - aborting\n", result);
         return result;
     }
-    calData = (unsigned char *)inv_malloc(length);
+    calData = (unsigned char *)malloc(length);
     if (!calData) {
         MPL_LOGE("Could not allocate buffer of %d bytes - "
                  "aborting\n", length);
@@ -1530,7 +1559,7 @@ inv_error_t inv_load_calibration(void)
 
 
 free_mem_n_exit:
-    inv_free(calData);
+    free(calData);
     return INV_SUCCESS;
 }
 
@@ -1554,7 +1583,7 @@ inv_error_t inv_store_calibration(void)
         return INV_ERROR_SM_IMPROPER_STATE;
 
     length = inv_get_cal_length();
-    calData = (unsigned char *)inv_malloc(length);
+    calData = (unsigned char *)malloc(length);
     if (!calData) {
         MPL_LOGE("Could not allocate buffer of %d bytes - "
                  "aborting\n", length);
@@ -1577,7 +1606,7 @@ inv_error_t inv_store_calibration(void)
 
 
 free_mem_n_exit:
-    inv_free(calData);
+    free(calData);
     return INV_SUCCESS;
 }
 

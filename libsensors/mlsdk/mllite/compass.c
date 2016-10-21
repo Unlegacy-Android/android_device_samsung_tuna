@@ -37,6 +37,7 @@
 /* - Include Files. - */
 /* ------------------ */
 
+#include <math.h>
 #include <string.h>
 #include <stdlib.h>
 #include "compass.h"
@@ -55,7 +56,7 @@
 #undef MPL_LOG_TAG
 #define MPL_LOG_TAG "MPL-compass"
 
-#define COMPASS_DEBUG 0
+//#define COMPASS_DEBUG
 
 /* --------------------- */
 /* - Global Variables. - */
@@ -77,23 +78,11 @@
 /* - Functions. - */
 /* -------------- */
 
-static float square(float data)
+static void adaptive_filter_init(struct yas_adaptive_filter *adap_filter)
 {
-    return data * data;
-}
-
-static void adaptive_filter_init(struct yas_adaptive_filter *adap_filter, int len, float noise)
-{
-    int i;
-
-    adap_filter->num = 0;
-    adap_filter->index = 0;
-    adap_filter->noise = noise;
-    adap_filter->len = len;
-
-    for (i = 0; i < adap_filter->len; ++i) {
-        adap_filter->sequence[i] = 0;
-    }
+    memset(adap_filter, 0, sizeof(struct yas_adaptive_filter));
+    adap_filter->noise = YAS_DEFAULT_FILTER_NOISE;
+    adap_filter->len = YAS_DEFAULT_FILTER_LEN;
 }
 
 static int cmpfloat(const void *p1, const void *p2)
@@ -106,35 +95,36 @@ static float adaptive_filter_filter(struct yas_adaptive_filter *adap_filter, flo
 {
     float avg, sum, median, sorted[YAS_DEFAULT_FILTER_LEN];
     int i;
+    int len = adap_filter->len;
 
-    if (adap_filter->len <= 1) {
+    if (len <= 1) {
         return in;
     }
-    if (adap_filter->num < adap_filter->len) {
+    if (adap_filter->num < len) {
         adap_filter->sequence[adap_filter->index++] = in;
         adap_filter->num++;
         return in;
     }
-    if (adap_filter->len <= adap_filter->index) {
+    if (len <= adap_filter->index) {
         adap_filter->index = 0;
     }
     adap_filter->sequence[adap_filter->index++] = in;
 
     avg = 0;
-    for (i = 0; i < adap_filter->len; i++) {
+    for (i = 0; i < len; i++) {
         avg += adap_filter->sequence[i];
     }
-    avg /= adap_filter->len;
+    avg /= len;
 
-    memcpy(sorted, adap_filter->sequence, adap_filter->len * sizeof(float));
-    qsort(&sorted, adap_filter->len, sizeof(float), cmpfloat);
-    median = sorted[adap_filter->len/2];
+    memcpy(sorted, adap_filter->sequence, len * sizeof(float));
+    qsort(&sorted, len, sizeof(float), cmpfloat);
+    median = sorted[len/2];
 
     sum = 0;
-    for (i = 0; i < adap_filter->len; i++) {
-        sum += square(avg - adap_filter->sequence[i]);
+    for (i = 0; i < len; i++) {
+        sum += powf(avg - adap_filter->sequence[i], 2);
     }
-    sum /= adap_filter->len;
+    sum /= len;
 
     if (sum <= adap_filter->noise) {
         return median;
@@ -143,9 +133,9 @@ static float adaptive_filter_filter(struct yas_adaptive_filter *adap_filter, flo
     return ((in - avg) * (sum - adap_filter->noise) / sum + avg);
 }
 
-static void thresh_filter_init(struct yas_thresh_filter *thresh_filter, float threshold)
+static void thresh_filter_init(struct yas_thresh_filter *thresh_filter)
 {
-    thresh_filter->threshold = threshold;
+    thresh_filter->threshold = YAS_DEFAULT_FILTER_THRESH;
     thresh_filter->last = 0;
 }
 
@@ -163,11 +153,6 @@ static float thresh_filter_filter(struct yas_thresh_filter *thresh_filter, float
 
 static int init(yas_filter_handle_t *t)
 {
-    float noise[] = {
-        YAS_DEFAULT_FILTER_NOISE,
-        YAS_DEFAULT_FILTER_NOISE,
-        YAS_DEFAULT_FILTER_NOISE,
-    };
     int i;
 
     if (t == NULL) {
@@ -175,8 +160,8 @@ static int init(yas_filter_handle_t *t)
     }
 
     for (i = 0; i < 3; i++) {
-        adaptive_filter_init(&t->adap_filter[i], YAS_DEFAULT_FILTER_LEN, noise[i]);
-        thresh_filter_init(&t->thresh_filter[i], YAS_DEFAULT_FILTER_THRESH);
+        adaptive_filter_init(&t->adap_filter[i]);
+        thresh_filter_init(&t->thresh_filter[i]);
     }
 
     return 0;
@@ -259,18 +244,13 @@ inv_error_t inv_get_compass_data(long *data)
                                                     inv_get_serial_handle(),
                                                     tmp);
         if (result) {
-            if (COMPASS_DEBUG) {
-                MPL_LOGV("inv_mpu_read_compass returned %d\n", result);
-            }
+#ifdef COMPASS_DEBUG
+            MPL_LOGV("inv_mpu_read_compass returned %d\n", result);
+#endif
             return result;
         }
         for (ii = 0; ii < 3; ii++) {
-            if (EXT_SLAVE_BIG_ENDIAN == mldl_cfg->compass->endian)
-                data[ii] =
-                    ((long)((signed char)tmp[2 * ii]) << 8) + tmp[2 * ii + 1];
-            else
-                data[ii] =
-                    ((long)((signed char)tmp[2 * ii + 1]) << 8) + tmp[2 * ii];
+            data[ii] = ((long)((signed char)tmp[2 * ii]) << 8) + tmp[2 * ii + 1];
         }
 
         inv_obj.compass_overunder = (int)tmp[6];
@@ -348,6 +328,17 @@ inv_error_t inv_set_compass_bias(long *bias)
  */
 inv_error_t inv_compass_read_scale(long *val)
 {
+#ifdef APPLY_COMPASS_FILTER
+    /* Compass filter is only done for YAS compasses.
+     * YAS doesn't support this feature. Avoid wasting time. */
+
+    /* some dummy code to avoid val being unused only if ifdef'd */
+    inv_error_t result = INV_ERROR_FEATURE_NOT_IMPLEMENTED;
+    if (val == NULL) {
+        result = INV_ERROR_INVALID_PARAMETER;
+    }
+    return result;
+#else
     struct ext_slave_config config;
     unsigned char data[3];
     inv_error_t result;
@@ -368,6 +359,7 @@ inv_error_t inv_compass_read_scale(long *val)
     val[1] = ((data[1] - 128) << 22) + (1L << 30);
     val[2] = ((data[2] - 128) << 22) + (1L << 30);
     return result;
+#endif
 }
 
 inv_error_t inv_set_compass_offset(void)

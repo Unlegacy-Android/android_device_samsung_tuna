@@ -38,8 +38,6 @@ extern "C" {
     inv_error_t inv_enable_set_bias(void);
     inv_error_t inv_disable_set_bias(void);
     inv_error_t inv_set_gyro_bias_in_hw_unit(const short *bias, int mode);
-    inv_error_t inv_set_gyro_bias_in_dps(const long *bias, int mode);
-    inv_error_t inv_set_gyro_bias_in_dps_float(const float *bias, int mode);
     void inv_convert_bias(const unsigned char *regs, short *bias);
     void inv_set_motion_state(int motion);
 

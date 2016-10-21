@@ -53,7 +53,7 @@
 #undef MPL_LOG_TAG
 #define MPL_LOG_TAG "MPL-accel"
 
-#define ACCEL_DEBUG 0
+//#define ACCEL_DEBUG
 
 /* --------------------- */
 /* - Global Variables. - */
@@ -107,7 +107,6 @@ inv_error_t inv_get_accel_data(long *data)
     long tmp[ACCEL_NUM_AXES];
     unsigned int ii;
     signed char *mtx = mldl_cfg->pdata->accel.orientation;
-    char accelId = mldl_cfg->accel->id;
 
     if (NULL == data)
         return INV_ERROR_INVALID_PARAMETER;
@@ -128,22 +127,8 @@ inv_error_t inv_get_accel_data(long *data)
     }
 
     for (ii = 0; ii < ARRAY_SIZE(tmp); ii++) {
-        if (EXT_SLAVE_LITTLE_ENDIAN == mldl_cfg->accel->endian) {
-            tmp[ii] = (long)((signed char)raw_data[2 * ii + 1]) * 256;
-            tmp[ii] += (long)((unsigned char)raw_data[2 * ii]);
-        } else if ((EXT_SLAVE_BIG_ENDIAN == mldl_cfg->accel->endian) ||
-                   (EXT_SLAVE_FS16_BIG_ENDIAN == mldl_cfg->accel->endian)) {
-            tmp[ii] = (long)((signed char)raw_data[2 * ii]) * 256;
-            tmp[ii] += (long)((unsigned char)raw_data[2 * ii + 1]);
-            if (accelId == ACCEL_ID_KXSD9) {
-                tmp[ii] = (long)((short)(((unsigned short)tmp[ii])
-                                         + ((unsigned short)0x8000)));
-            }
-        } else if (EXT_SLAVE_FS8_BIG_ENDIAN == mldl_cfg->accel->endian) {
-            tmp[ii] = (long)((signed char)raw_data[ii]) * 256;
-        } else {
-            result = INV_ERROR_FEATURE_NOT_IMPLEMENTED;
-        }
+        tmp[ii] = (long)((signed char)raw_data[2 * ii + 1]) * 256;
+        tmp[ii] += (long)((unsigned char)raw_data[2 * ii]);
     }
 
     for (ii = 0; ii < ARRAY_SIZE(tmp); ii++) {

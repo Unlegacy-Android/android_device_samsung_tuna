@@ -86,30 +86,16 @@ extern "C" {
                                       uint_fast16_t accuracy);
     inv_error_t inv_send_linear_accel_in_world(uint_fast16_t elements,
                                                uint_fast16_t accuracy);
-    inv_error_t inv_send_external_sensor_data(uint_fast16_t elements,
-                                              uint_fast16_t accuracy);
     inv_error_t inv_send_gravity(uint_fast16_t elements,
                                  uint_fast16_t accuracy);
-    inv_error_t inv_send_packet_number(uint_fast16_t accuracy);
-    inv_error_t inv_send_quantized_accel(uint_fast16_t elements,
-                                         uint_fast16_t accuracy);
-    inv_error_t inv_send_eis(uint_fast16_t elements, uint_fast16_t accuracy);
 
     // Get Fixed Point data from FIFO
     inv_error_t inv_get_accel(long *data);
     inv_error_t inv_get_quaternion(long *data);
     inv_error_t inv_get_6axis_quaternion(long *data);
-    inv_error_t inv_get_relative_quaternion(long *data);
     inv_error_t inv_get_gyro(long *data);
-    inv_error_t inv_set_linear_accel_filter_coef(float coef);
     inv_error_t inv_get_linear_accel(long *data);
-    inv_error_t inv_get_linear_accel_in_world(long *data);
-    inv_error_t inv_get_gyro_and_accel_sensor(long *data);
-    inv_error_t inv_get_cntrl_data(long *data);
-    inv_error_t inv_get_temperature(long *data);
     inv_error_t inv_get_gravity(long *data);
-    inv_error_t inv_get_external_sensor_data(long *data, int size);
-    inv_error_t inv_get_eis(long *data);
 
     // Get Floating Point data from FIFO
     inv_error_t inv_get_accel_float(float *data);

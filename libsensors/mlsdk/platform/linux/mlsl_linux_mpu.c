@@ -85,66 +85,6 @@
 /* - Definitions. - */
 /* ---------------- */
 
-inv_error_t inv_serial_read_cfg(unsigned char *cfg, unsigned int len)
-{
-    FILE *fp;
-    unsigned int bytesRead;
-
-    fp = fopen(MLCFG_FILE, "rb");
-    if (fp == NULL) {
-        MPL_LOGE("Unable to open \"%s\" for read\n", MLCFG_FILE);
-        return INV_ERROR_FILE_OPEN;
-    }
-    bytesRead = fread(cfg, 1, len, fp);
-    if (bytesRead != len) {
-        MPL_LOGE("bytes read (%d) don't match requested length (%d)\n",
-                 bytesRead, len);
-        return INV_ERROR_FILE_READ;
-    }
-    fclose(fp);
-
-    if (((unsigned int)cfg[0] << 24 | cfg[1] << 16 | cfg[2] << 8 | cfg[3])
-        != MLCFG_ID) {
-        return INV_ERROR_ASSERTION_FAILURE;
-    }
-
-    return INV_SUCCESS;
-}
-
-inv_error_t inv_serial_write_cfg(unsigned char *cfg, unsigned int len)
-{
-    FILE *fp;
-    unsigned int bytesWritten;
-    unsigned char cfgId[4];
-
-    fp = fopen(MLCFG_FILE,"wb");
-    if (fp == NULL) {
-        MPL_LOGE("Unable to open \"%s\" for write\n", MLCFG_FILE);
-        return INV_ERROR_FILE_OPEN;
-    }
-
-    cfgId[0] = (unsigned char)(MLCFG_ID >> 24);
-    cfgId[1] = (unsigned char)(MLCFG_ID >> 16);
-    cfgId[2] = (unsigned char)(MLCFG_ID >> 8);
-    cfgId[3] = (unsigned char)(MLCFG_ID);
-    bytesWritten = fwrite(cfgId, 1, 4, fp);
-    if (bytesWritten != 4) {
-        MPL_LOGE("CFG ID could not be written on file\n");
-        return INV_ERROR_FILE_WRITE;
-    }
-
-    bytesWritten = fwrite(cfg, 1, len, fp);
-    if (bytesWritten != len) {
-        MPL_LOGE("bytes write (%d) don't match requested length (%d)\n",
-                 bytesWritten, len);
-        return INV_ERROR_FILE_WRITE;
-    }
-
-    fclose(fp);
-
-    return INV_SUCCESS;
-}
-
 inv_error_t inv_serial_read_cal(unsigned char *cal, unsigned int len)
 {
     FILE *fp;
@@ -248,11 +188,6 @@ inv_error_t inv_serial_close(void *sl_handle)
     close((int)(uintptr_t)sl_handle);
 
     return INV_SUCCESS;
-}
-
-inv_error_t inv_serial_reset(void *sl_handle __unused)
-{
-    return INV_ERROR_FEATURE_NOT_IMPLEMENTED;
 }
 
 inv_error_t inv_serial_single_write(void *sl_handle,
@@ -410,42 +345,6 @@ inv_error_t inv_serial_read_mem(void *sl_handle,
     return INV_SUCCESS;
 }
 
-inv_error_t inv_serial_write_fifo(void *sl_handle,
-                             unsigned char mpu_addr __unused,
-                             unsigned short length,
-                             const unsigned char *data)
-{
-    INVENSENSE_FUNC_START;
-    struct mpu_read_write msg;
-    int result;
-
-    if (NULL == data) {
-        return INV_ERROR_INVALID_PARAMETER;
-    }
-
-    msg.address = 0; /* Not used */
-    msg.length  = length;
-    msg.data    = (unsigned char *)data;
-
-    result = ioctl((int)(uintptr_t)sl_handle, MPU_WRITE_FIFO, &msg);
-    if (result != INV_SUCCESS) {
-        MPL_LOGE("I2C Error: could not write fifo: %02x %02x\n",
-                  MPUREG_FIFO_R_W, length);
-        return INV_ERROR_SERIAL_WRITE;
-    } else if (SERIAL_FULL_DEBUG) {
-        char data_buff[4096] = "";
-        char strchar[3];
-        int ii;
-        for (ii = 0; ii < length; ii++) {
-            snprintf(strchar, sizeof(strchar), "%02x", data[0]);
-            strncat(data_buff, strchar, (sizeof(data_buff) - strlen(data_buff) - 1));
-        }
-        MPL_LOGI("I2C Write Success %02x %02x: %s\n",
-                 MPUREG_FIFO_R_W, length, data_buff);
-    }
-    return (inv_error_t) result;
-}
-
 inv_error_t inv_serial_read_fifo(void *sl_handle,
                             unsigned char  mpu_addr __unused,
                             unsigned short length,
@@ -485,5 +384,3 @@ inv_error_t inv_serial_read_fifo(void *sl_handle,
 /**
  *  @}
  */
-
-

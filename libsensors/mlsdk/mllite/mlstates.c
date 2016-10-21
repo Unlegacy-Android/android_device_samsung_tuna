@@ -36,6 +36,7 @@
 /* - Include Files. - */
 /* ------------------ */
 
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -68,13 +69,34 @@ static struct state_callback_obj sStateChangeCallbacks = { 0, 0, { NULL } };
 static inv_error_t inv_init_state_callbacks(void)
 {
     memset(&sStateChangeCallbacks, 0, sizeof(sStateChangeCallbacks));
-    return inv_create_mutex(&sStateChangeCallbacks.mutex);
+
+    pthread_mutex_t *pm = malloc(sizeof(pthread_mutex_t));
+    if (pm == NULL) {
+        LOG_RESULT_LOCATION(INV_ERROR);
+        return INV_ERROR;
+    }
+    if (pthread_mutex_init(pm, NULL) == -1) {
+        free(pm);
+        LOG_RESULT_LOCATION(INV_ERROR_OS_CREATE_FAILED);
+        return INV_ERROR_OS_CREATE_FAILED;
+    }
+    sStateChangeCallbacks.mutex = (HANDLE)pm;
+
+    return INV_SUCCESS;
 }
 
 static inv_error_t MLStateCloseCallbacks(void)
 {
-    inv_error_t result;
-    result = inv_destroy_mutex(sStateChangeCallbacks.mutex);
+    inv_error_t result = INV_SUCCESS;
+
+    pthread_mutex_t *pm = (pthread_mutex_t*)sStateChangeCallbacks.mutex;
+    if (pthread_mutex_destroy(pm)) {
+        result = errno;
+    } else {
+        free((void*) sStateChangeCallbacks.mutex);
+        result = INV_SUCCESS;
+    }
+
     memset(&sStateChangeCallbacks, 0, sizeof(sStateChangeCallbacks));
     return result;
 }
@@ -172,12 +194,13 @@ inv_error_t inv_register_state_callback(state_change_callback_t callback)
 {
     INVENSENSE_FUNC_START;
     int kk;
-    inv_error_t result;
+    inv_error_t result = INV_SUCCESS;
 
-    result = inv_lock_mutex(sStateChangeCallbacks.mutex);
-    if (INV_SUCCESS != result) {
-        return result;
+    pthread_mutex_t *pm = (pthread_mutex_t*)sStateChangeCallbacks.mutex;
+    if (pthread_mutex_lock(pm) == -1) {
+        return INV_ERROR_OS_LOCK_FAILED;
     }
+
     // Make sure we have not filled up our number of allowable callbacks
     if (sStateChangeCallbacks.numStateChangeCallbacks <
         MAX_STATE_CHANGE_PROCESSES) {
@@ -200,7 +223,7 @@ inv_error_t inv_register_state_callback(state_change_callback_t callback)
         result = INV_ERROR_MEMORY_EXAUSTED;
     }
 
-    inv_unlock_mutex(sStateChangeCallbacks.mutex);
+    pthread_mutex_unlock(pm);
     return result;
 }
 
@@ -215,12 +238,13 @@ inv_error_t inv_unregister_state_callback(state_change_callback_t callback)
 {
     INVENSENSE_FUNC_START;
     int kk, jj;
-    inv_error_t result;
+    inv_error_t result = INV_SUCCESS;
 
-    result = inv_lock_mutex(sStateChangeCallbacks.mutex);
-    if (INV_SUCCESS != result) {
-        return result;
+    pthread_mutex_t *pm = (pthread_mutex_t*)sStateChangeCallbacks.mutex;
+    if (pthread_mutex_lock(pm) == -1) {
+        return INV_ERROR_OS_LOCK_FAILED;
     }
+
     // Make sure we haven't registered this function already
     result = INV_ERROR_INVALID_PARAMETER;
     for (kk = 0; kk < sStateChangeCallbacks.numStateChangeCallbacks; ++kk) {
@@ -236,19 +260,19 @@ inv_error_t inv_unregister_state_callback(state_change_callback_t callback)
         }
     }
 
-    inv_unlock_mutex(sStateChangeCallbacks.mutex);
+    pthread_mutex_unlock(pm);
     return result;
 }
 
 inv_error_t inv_run_state_callbacks(unsigned char newState)
 {
     int kk;
-    inv_error_t result;
+    inv_error_t result = INV_SUCCESS;
 
-    result = inv_lock_mutex(sStateChangeCallbacks.mutex);
-    if (INV_SUCCESS != result) {
-        MPL_LOGE("MLOsLockMutex returned %d\n", result);
-        return result;
+    pthread_mutex_t *pm = (pthread_mutex_t*)sStateChangeCallbacks.mutex;
+    if (pthread_mutex_lock(pm) == -1) {
+        MPL_LOGE("MLOsLockMutex returned %d\n", INV_ERROR_OS_LOCK_FAILED);
+        return INV_ERROR_OS_LOCK_FAILED;
     }
 
     for (kk = 0; kk < sStateChangeCallbacks.numStateChangeCallbacks; ++kk) {
@@ -260,6 +284,6 @@ inv_error_t inv_run_state_callbacks(unsigned char newState)
         }
     }
 
-    inv_unlock_mutex(sStateChangeCallbacks.mutex);
+    pthread_mutex_unlock(pm);
     return result;
 }

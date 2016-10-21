@@ -96,12 +96,6 @@ inv_error_t inv_serial_open(char const *port, void **sl_handle);
  *  returns INV_SUCCESS if successful, a non-zero error code otherwise.
  */
 inv_error_t inv_serial_close(void *sl_handle);
-
-/**
- *  inv_serial_reset() - used to reset any buffering the driver may be doing
- *  returns INV_SUCCESS if successful, a non-zero error code otherwise.
- */
-inv_error_t inv_serial_reset(void *sl_handle);
 #endif
 
 /**
@@ -205,48 +199,7 @@ inv_error_t inv_serial_read_fifo(
 	unsigned short length,
 	unsigned char *data);
 
-/**
- *  inv_serial_write_fifo() - used to write multiple bytes of data to the fifo.
- *  @sl_handle	a file handle to the serial device used for the communication.
- *  @slave_addr	I2C slave address of device.
- *  @length	Length of burst of data.
- *  @data	Pointer to block of data.
- *
- *  returns INV_SUCCESS == 0 if successful; a non-zero error code otherwise.
- */
-inv_error_t inv_serial_write_fifo(
-	void *sl_handle,
-	unsigned char slave_addr,
-	unsigned short length,
-	unsigned char const *data);
-
 #ifndef __KERNEL__
-/**
- *  inv_serial_read_cfg() - used to get the configuration data.
- *  @cfg	Pointer to the configuration data.
- *  @len	Length of the configuration data.
- *
- *		Is called by the MPL to get the configuration data
- *		used by the motion library.
- *		This data would typically be saved in non-volatile memory.
- *
- *  returns INV_SUCCESS if successful, a non-zero error code otherwise.
- */
-inv_error_t inv_serial_read_cfg(unsigned char *cfg, unsigned int len);
-
-/**
- *  inv_serial_write_cfg() - used to save the configuration data.
- *  @cfg	Pointer to the configuration data.
- *  @len	Length of the configuration data.
- *
- *		Is called by the MPL to save the configuration data used by the
- *		motion library.
- *		This data would typically be saved in non-volatile memory.
- *
- *  returns INV_SUCCESS if successful, a non-zero error code otherwise.
- */
-inv_error_t inv_serial_write_cfg(unsigned char *cfg, unsigned int len);
-
 /**
  *  inv_serial_read_cal() - used to get the calibration data.
  *  @cfg	Pointer to the calibration data.

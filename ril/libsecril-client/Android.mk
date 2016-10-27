@@ -5,7 +5,8 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_TAGS := eng
 
 LOCAL_SRC_FILES:= \
-    secril-client.cpp
+    secril-client.cpp \
+    secril-compat.cpp
 
 LOCAL_SHARED_LIBRARIES := \
     libutils \

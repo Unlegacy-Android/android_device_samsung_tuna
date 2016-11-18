@@ -219,13 +219,6 @@
 /* minimum sleep time in out_write() when write threshold is not reached */
 #define MIN_WRITE_SLEEP_US 5000
 
-
-#ifdef FORCE_OUT_SAMPLING_RATE
-#define DEFAULT_OUT_SAMPLING_RATE FORCE_OUT_SAMPLING_RATE
-#define MM_LOW_POWER_SAMPLING_RATE FORCE_OUT_SAMPLING_RATE
-#define MM_FULL_POWER_SAMPLING_RATE FORCE_OUT_SAMPLING_RATE
-#endif
-
 #ifndef DEFAULT_OUT_SAMPLING_RATE
 #define DEFAULT_OUT_SAMPLING_RATE 44100
 #endif
@@ -444,9 +437,7 @@ struct tuna_stream_out {
 
     struct tuna_audio_device *dev;
 
-#ifdef USE_VARIABLE_SAMPLING_RATE
     unsigned int sample_rate;
-#endif
 };
 
 struct tuna_audio_device {

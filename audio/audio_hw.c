@@ -754,17 +754,8 @@ static int start_output_stream_low_latency(struct tuna_stream_out *out)
     }
 
     if (success) {
-#ifdef OUT_RESAMPLER
-        out->buffer_frames = pcm_config_tones.period_size * 2;
-        if (out->buffer == NULL)
-            out->buffer = malloc(out->buffer_frames * audio_stream_out_frame_size(&out->stream));
-#endif
-
         if (adev->echo_reference != NULL)
             out->echo_reference = adev->echo_reference;
-#ifdef OUT_RESAMPLER
-        out->resampler->reset(out->resampler);
-#endif
 
         return 0;
     }
@@ -808,12 +799,6 @@ static int start_output_stream_deep_buffer(struct tuna_stream_out *out)
         pcm_set_avail_min(out->pcm[PCM_NORMAL], DEEP_BUFFER_SHORT_PERIOD_SIZE);
         out->write_threshold = DEEP_BUFFER_SHORT_PERIOD_WRITE_THRES;
     }
-
-#ifdef OUT_RESAMPLER
-    out->buffer_frames = DEEP_BUFFER_SHORT_PERIOD_SIZE * 2;
-    if (out->buffer == NULL)
-        out->buffer = malloc(out->buffer_frames * audio_stream_out_frame_size(&out->stream));
-#endif
 
     return 0;
 }
@@ -1318,9 +1303,7 @@ static ssize_t out_write_low_latency(struct audio_stream_out *stream, const void
     int ret;
     struct tuna_stream_out *out = (struct tuna_stream_out *)stream;
     struct tuna_audio_device *adev = out->dev;
-    size_t frame_size = audio_stream_out_frame_size(stream);
-    size_t in_frames = bytes / frame_size;
-    size_t out_frames = in_frames;
+    size_t frames = bytes / audio_stream_out_frame_size(stream);
     bool force_input_standby = false;
     struct tuna_stream_in *in;
     int i;
@@ -1345,44 +1328,19 @@ static ssize_t out_write_low_latency(struct audio_stream_out *stream, const void
     }
     pthread_mutex_unlock(&adev->lock);
 
-#ifdef OUT_RESAMPLER
-    for (i = 0; i < PCM_TOTAL; i++) {
-        /* only use resampler if required */
-        if (out->pcm[i] && (out->config[i].rate != DEFAULT_OUT_SAMPLING_RATE)) {
-            out_frames = out->buffer_frames;
-            out->resampler->resample_from_input(out->resampler,
-                                                (int16_t *)buffer,
-                                                &in_frames,
-                                                (int16_t *)out->buffer,
-                                                &out_frames);
-            break;
-        }
-    }
-#endif
-
     if (out->echo_reference != NULL) {
         struct echo_reference_buffer b;
         b.raw = (void *)buffer;
-        b.frame_count = in_frames;
+        b.frame_count = frames;
 
-        get_playback_delay(out, out_frames, &b);
+        get_playback_delay(out, frames, &b);
         out->echo_reference->write(out->echo_reference, &b);
     }
 
     /* Write to all active PCMs */
     for (i = 0; i < PCM_TOTAL; i++) {
         if (out->pcm[i]) {
-#ifdef OUT_RESAMPLER
-            if (out->config[i].rate == DEFAULT_OUT_SAMPLING_RATE) {
-                /* PCM uses native sample rate */
-#endif
-                ret = PCM_WRITE(out->pcm[i], (void *)buffer, bytes);
-#ifdef OUT_RESAMPLER
-            } else {
-                /* PCM needs resampler */
-                ret = PCM_WRITE(out->pcm[i], (void *)out->buffer, out_frames * frame_size);
-            }
-#endif
+            ret = PCM_WRITE(out->pcm[i], (void *)buffer, bytes);
             if (ret)
                 break;
         }
@@ -1416,12 +1374,9 @@ static ssize_t out_write_deep_buffer(struct audio_stream_out *stream, const void
     int ret;
     struct tuna_stream_out *out = (struct tuna_stream_out *)stream;
     struct tuna_audio_device *adev = out->dev;
-    size_t frame_size = audio_stream_out_frame_size(&out->stream);
-    size_t in_frames = bytes / frame_size;
-    size_t out_frames;
+    size_t frames = bytes / audio_stream_out_frame_size(&out->stream);
     bool use_long_periods;
     int kernel_frames;
-    void *buf;
 
     /* acquiring hw device mutex systematically is useful if a low priority thread is waiting
      * on the output stream mutex - e.g. executing select_mode() while holding the hw device
@@ -1451,24 +1406,6 @@ static ssize_t out_write_deep_buffer(struct audio_stream_out *stream, const void
         out->use_long_periods = use_long_periods;
     }
 
-#ifdef OUT_RESAMPLER
-    /* only use resampler if required */
-    if (out->config[PCM_NORMAL].rate != DEFAULT_OUT_SAMPLING_RATE) {
-        out_frames = out->buffer_frames;
-        out->resampler->resample_from_input(out->resampler,
-                                            (int16_t *)buffer,
-                                            &in_frames,
-                                            (int16_t *)out->buffer,
-                                            &out_frames);
-        buf = (void *)out->buffer;
-    } else {
-#endif
-        out_frames = in_frames;
-        buf = (void *)buffer;
-#ifdef OUT_RESAMPLER
-    }
-#endif
-
     /* do not allow more than out->write_threshold frames in kernel pcm driver buffer */
     do {
         struct timespec time_stamp;
@@ -1494,7 +1431,7 @@ static ssize_t out_write_deep_buffer(struct audio_stream_out *stream, const void
         }
     } while (kernel_frames > out->write_threshold);
 
-    ret = pcm_mmap_write(out->pcm[PCM_NORMAL], buf, out_frames * frame_size);
+    ret = pcm_mmap_write(out->pcm[PCM_NORMAL], buffer, bytes);
 
 exit:
     pthread_mutex_unlock(&out->lock);
@@ -2709,17 +2646,6 @@ static int adev_open_output_stream(struct audio_hw_device *dev,
         out->stream.set_volume = out_set_volume;
     }
 
-#ifdef OUT_RESAMPLER
-    ret = create_resampler(DEFAULT_OUT_SAMPLING_RATE,
-                           MM_FULL_POWER_SAMPLING_RATE,
-                           2,
-                           RESAMPLER_QUALITY_DEFAULT,
-                           NULL,
-                           &out->resampler);
-    if (ret != 0)
-        goto err_open;
-#endif
-
     out->stream.common.set_sample_rate = out_set_sample_rate;
     out->stream.common.get_channels = out_get_channels;
     out->stream.common.get_format = out_get_format;
@@ -2772,12 +2698,6 @@ static void adev_close_output_stream(struct audio_hw_device *dev,
         }
     }
 
-#ifdef OUT_RESAMPLER
-    if (out->buffer)
-        free(out->buffer);
-    if (out->resampler)
-        release_resampler(out->resampler);
-#endif
     free(stream);
 }
 

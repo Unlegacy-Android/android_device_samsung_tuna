@@ -260,14 +260,6 @@
  */
 #ifdef PLAYBACK_MMAP
 #define PLAYBACK_SHORT_PERIOD_COUNT 4
-/* If sample rate converter is required, then use triple-buffering to
- * help mask the variance in cycle times.  Otherwise use double-buffering.
- */
-/* TODO: Figure out a better check for this
-#elif DEFAULT_OUT_SAMPLING_RATE != MM_FULL_POWER_SAMPLING_RATE
-#define PLAYBACK_SHORT_PERIOD_COUNT 3
-#define OUT_RESAMPLER
-*/
 #else
 #define PLAYBACK_SHORT_PERIOD_COUNT 2
 #endif
@@ -436,11 +428,6 @@ struct tuna_stream_out {
     pthread_mutex_t lock;       /* see note below on mutex acquisition order */
     struct pcm_config config[PCM_TOTAL];
     struct pcm *pcm[PCM_TOTAL];
-#ifdef OUT_RESAMPLER
-    struct resampler_itfe *resampler;
-    char *buffer;
-    size_t buffer_frames;
-#endif
     int standby;
     struct echo_reference_itfe *echo_reference;
     int write_threshold;

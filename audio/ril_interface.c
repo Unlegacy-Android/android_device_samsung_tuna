@@ -25,12 +25,13 @@
 
 #include "ril_interface.h"
 
-#define VOLUME_STEPS_DEFAULT  "5"
+#define VOLUME_STEPS_DEFAULT  5
 #define VOLUME_STEPS_PROPERTY "ro.config.vc_call_vol_steps"
 
 /* Audio WB AMR callback */
 void (*_audio_set_wb_amr_callback)(void *, int);
 void *callback_data = NULL;
+static int volume_steps_max = VOLUME_STEPS_DEFAULT;
 
 void ril_register_set_wb_amr_callback(void *function, void *data)
 {
@@ -54,57 +55,53 @@ static int ril_set_wb_amr_callback(void *ril_client,
     return 0;
 }
 
-static int ril_connect_if_required(struct ril_handle *ril)
+static int ril_connect_if_required(void *ril_handle)
 {
-    if (isConnected_RILD(ril->client))
+    if (isConnected_RILD(ril_handle))
         return 0;
 
-    if (Connect_RILD(ril->client) != RIL_CLIENT_ERR_SUCCESS) {
+    if (Connect_RILD(ril_handle) != RIL_CLIENT_ERR_SUCCESS) {
         ALOGE("Connect_RILD() failed");
         return -1;
     }
 
     /* get wb amr status to set pcm samplerate depending on
        wb amr status when ril is connected. */
-    GetWB_AMR(ril->client, (RilOnComplete)ril_set_wb_amr_callback);
+    GetWB_AMR(ril_handle, (RilOnComplete)ril_set_wb_amr_callback);
 
     return 0;
 }
 
-int ril_open(struct ril_handle *ril)
+int ril_open(void *ril_handle)
 {
-    char property[PROPERTY_VALUE_MAX];
-
-    if (!ril)
+    if (!ril_handle)
         return -1;
 
-    ril->client = OpenClient_RILD();
-    if (!ril->client) {
+    ril_handle = OpenClient_RILD();
+    if (!ril_handle) {
         ALOGE("OpenClient_RILD() failed");
         return -1;
     }
 
     /* register the wideband AMR callback */
-    RegisterUnsolicitedHandler(ril->client, RIL_UNSOL_WB_AMR_STATE,
+    RegisterUnsolicitedHandler(ril_handle, RIL_UNSOL_WB_AMR_STATE,
                                (RilOnUnsolicited)ril_set_wb_amr_callback);
 
-    property_get(VOLUME_STEPS_PROPERTY, property, VOLUME_STEPS_DEFAULT);
-    ril->volume_steps_max = atoi(property);
-    /* this catches the case where VOLUME_STEPS_PROPERTY does not contain
-    an integer */
-    if (ril->volume_steps_max == 0)
-        ril->volume_steps_max = atoi(VOLUME_STEPS_DEFAULT);
+    volume_steps_max = property_get_int32(VOLUME_STEPS_PROPERTY, VOLUME_STEPS_DEFAULT);
+    /* in case volume_steps_max has been messed with */
+    if (volume_steps_max <= 0)
+        volume_steps_max = VOLUME_STEPS_DEFAULT;
 
     return 0;
 }
 
-int ril_close(struct ril_handle *ril)
+int ril_close(void *ril_handle)
 {
-    if (!ril || !ril->client)
+    if (!ril_handle)
         return -1;
 
-    if ((Disconnect_RILD(ril->client) != RIL_CLIENT_ERR_SUCCESS) ||
-        (CloseClient_RILD(ril->client) != RIL_CLIENT_ERR_SUCCESS)) {
+    if ((Disconnect_RILD(ril_handle) != RIL_CLIENT_ERR_SUCCESS) ||
+        (CloseClient_RILD(ril_handle) != RIL_CLIENT_ERR_SUCCESS)) {
         ALOGE("Disconnect_RILD() or CloseClient_RILD() failed");
         return -1;
     }
@@ -112,28 +109,28 @@ int ril_close(struct ril_handle *ril)
     return 0;
 }
 
-int ril_set_call_volume(struct ril_handle *ril, enum _SoundType sound_type,
+int ril_set_call_volume(void *ril_handle, enum _SoundType sound_type,
                         float volume)
 {
-    if (ril_connect_if_required(ril))
+    if (ril_connect_if_required(ril_handle))
         return 0;
 
-    return SetCallVolume(ril->client, sound_type,
-                         (int)(volume * ril->volume_steps_max));
+    return SetCallVolume(ril_handle, sound_type,
+                         (int)(volume * volume_steps_max));
 }
 
-int ril_set_call_audio_path(struct ril_handle *ril, enum _AudioPath path)
+int ril_set_call_audio_path(void *ril_handle, enum _AudioPath path)
 {
-    if (ril_connect_if_required(ril))
+    if (ril_connect_if_required(ril_handle))
         return 0;
 
-    return SetCallAudioPath(ril->client, path);
+    return SetCallAudioPath(ril_handle, path);
 }
 
-int ril_set_mic_mute(struct ril_handle *ril, enum _MuteCondition state)
+int ril_set_mic_mute(void *ril_handle, enum _MuteCondition state)
 {
-    if (ril_connect_if_required(ril))
+    if (ril_connect_if_required(ril_handle))
         return 0;
 
-    return SetMute(ril->client, state);
+    return SetMute(ril_handle, state);
 }

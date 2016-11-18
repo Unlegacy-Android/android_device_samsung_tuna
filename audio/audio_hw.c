@@ -253,7 +253,7 @@ static void set_incall_device(struct tuna_audio_device *adev)
     }
 
     /* if output device isn't supported, open modem side to handset by default */
-    ril_set_call_audio_path(&adev->ril, device_type);
+    ril_set_call_audio_path(adev->ril_handle, device_type);
 }
 
 static void set_input_volumes(struct tuna_audio_device *adev, int main_mic_on,
@@ -454,7 +454,7 @@ static void select_mode(struct tuna_audio_device *adev)
                 adev->out_device &= ~AUDIO_DEVICE_OUT_SPEAKER;
             select_output_device(adev);
             start_call(adev);
-            ril_set_call_volume(&adev->ril, SOUND_TYPE_VOICE, adev->voice_volume);
+            ril_set_call_volume(adev->ril_handle, SOUND_TYPE_VOICE, adev->voice_volume);
             adev->in_call = 1;
         }
     } else {
@@ -2719,7 +2719,7 @@ static int adev_set_voice_volume(struct audio_hw_device *dev, float volume)
     adev->voice_volume = volume;
 
     if (adev->mode == AUDIO_MODE_IN_CALL)
-        ril_set_call_volume(&adev->ril, SOUND_TYPE_VOICE, volume);
+        ril_set_call_volume(adev->ril_handle, SOUND_TYPE_VOICE, volume);
 
     pthread_mutex_unlock(&adev->lock);
     return 0;
@@ -2749,7 +2749,7 @@ static int adev_set_mic_mute(struct audio_hw_device *dev, bool state)
     struct tuna_audio_device *adev = (struct tuna_audio_device *)dev;
 
     if (adev->mode == AUDIO_MODE_IN_CALL) {
-        ril_set_mic_mute(&adev->ril, state);
+        ril_set_mic_mute(adev->ril_handle, state);
         /* Not all devices work with the ril_set_mic_mute function.
          * the following change is acceptable if sec_mic_mute fails. */
         unsigned int channel;
@@ -2901,7 +2901,7 @@ static int adev_close(hw_device_t *device)
     struct tuna_audio_device *adev = (struct tuna_audio_device *)device;
 
     /* RIL */
-    ril_close(&adev->ril);
+    ril_close(adev->ril_handle);
 
     mixer_close(adev->mixer);
     free(device);
@@ -3043,7 +3043,7 @@ static int adev_open(const hw_module_t* module, const char* name,
     adev->wb_amr = 0;
 
     /* RIL */
-    ril_open(&adev->ril);
+    ril_open(adev->ril_handle);
     pthread_mutex_unlock(&adev->lock);
     /* register callback for wideband AMR setting */
     ril_register_set_wb_amr_callback(audio_set_wb_amr_callback, (void *)adev);

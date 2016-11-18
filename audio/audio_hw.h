@@ -463,7 +463,7 @@ struct tuna_audio_device {
     bool screen_off;
 
     /* RIL */
-    struct ril_handle ril;
+    void *ril_handle;
 };
 
 

@@ -23,19 +23,13 @@
 #define RIL_UNSOL_WB_AMR_STATE \
     (RIL_OEM_UNSOL_RESPONSE_BASE + 17)    // RIL AMR state index
 
-struct ril_handle
-{
-    void *client;
-    int volume_steps_max;
-};
-
 /* Function prototypes */
-int ril_open(struct ril_handle *ril);
-int ril_close(struct ril_handle *ril);
-int ril_set_call_volume(struct ril_handle *ril, enum _SoundType sound_type,
+int ril_open(void *ril_handle);
+int ril_close(void *ril_handle);
+int ril_set_call_volume(void *ril_handle, enum _SoundType sound_type,
                         float volume);
-int ril_set_call_audio_path(struct ril_handle *ril, enum _AudioPath path);
-int ril_set_mic_mute(struct ril_handle *ril, enum _MuteCondition state);
+int ril_set_call_audio_path(void *ril_handle, enum _AudioPath path);
+int ril_set_mic_mute(void *ril_handle, enum _MuteCondition state);
 void ril_register_set_wb_amr_callback(void *function, void *data);
 
 #endif

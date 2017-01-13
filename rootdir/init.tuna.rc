@@ -65,9 +65,6 @@ on fs
     chmod 0660 /dev/i2c-2
     chown media media /dev/i2c-2
 
-    # pvr module
-    insmod /system/lib/modules/pvrsrvkm_sgx540_120.ko
-
     # add symlink for HDCP key
     symlink /factory/hdcp.keys /system/vendor/firmware/hdcp.keys
 

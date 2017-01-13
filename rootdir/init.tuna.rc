@@ -54,9 +54,6 @@ on fs
     # increase read-ahead value to 256 kb
     write /sys/block/mmcblk0/queue/read_ahead_kb 256
 
-    # pvr module
-    insmod /system/lib/modules/pvrsrvkm_sgx540_120.ko
-
     # add symlink for HDCP key
     symlink /factory/hdcp.keys /system/vendor/firmware/hdcp.keys
 

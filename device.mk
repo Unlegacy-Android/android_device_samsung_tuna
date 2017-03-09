@@ -102,6 +102,9 @@ PRODUCT_COPY_FILES += \
 
 # GPS
 $(call inherit-product, device/common/gps/gps_us_supl.mk)
+# Legacy GPS
+PRODUCT_PACKAGES += \
+    gps.tuna
 
 # Media profiles
 PRODUCT_COPY_FILES += \

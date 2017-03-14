@@ -7,9 +7,10 @@ allow rild { radio_data_file radio_efs_file }:file rw_file_perms;
 allow rild self:process execmem;
 allow rild block_device:dir { search };
 allow rild proc_net:file write;
+allow rild toolbox_exec:file { execute execute_no_trans getattr open read };
 
 # Needed for /system/vendor/lib/libsec-ril.so
-#allow rild system_file:file { execute execmod };
+allow rild system_file:file execmod;
 
 # Have no idea why rild needs access to logcat,
 # potentially to catch errors from some other components?

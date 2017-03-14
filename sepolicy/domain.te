@@ -1,0 +1,2 @@
+# RootFS
+allow domain rootfs:lnk_file { read getattr };

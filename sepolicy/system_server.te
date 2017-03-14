@@ -1,4 +1,5 @@
 # system_server
+allow system_server user_profile_data_file:dir read;
 
 # Needed for /system/vendor/lib/hw/gps.omap4.so
-#allow system_server system_file:file { execmod };
+allow system_server system_file:file execmod;

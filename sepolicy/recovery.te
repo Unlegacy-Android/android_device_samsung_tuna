@@ -1,5 +1,7 @@
 # recovery
 type recovery_exec, exec_type, file_type;
+allow recovery shell_exec:file getattr;
+allow recovery toolbox_exec:file { getattr read open execute execute_no_trans };
 
 # Instead of 'init_daemon_domain(recovery)' we're using
 # 'domain_auto_trans', which is the first part of 'init_daemon_domain'.

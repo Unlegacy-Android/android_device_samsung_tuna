@@ -1,6 +1,9 @@
 import init.omap4.rc
 import init.tuna.usb.rc
 
+on early-init
+    mount debugfs /sys/kernel/debug /sys/kernel/debug
+
 on init
     symlink /sdcard /storage/sdcard0
 
@@ -31,8 +34,6 @@ on early-boot
     setrlimit 8 67108864 67108864
 
 on boot
-    mount debugfs /sys/kernel/debug /sys/kernel/debug
-
     # autosuspend root hubs immediatly after attached devices
     write /sys/bus/usb/devices/usb1/power/autosuspend_delay_ms 0
     write /sys/bus/usb/devices/usb2/power/autosuspend_delay_ms 0

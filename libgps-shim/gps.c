@@ -25,7 +25,7 @@
 #include <string.h>
 
 #include "gps.h"
-#define REAL_GPS_PATH "/vendor/maguro/lib/hw/gps.omap4.so"
+#define REAL_GPS_PATH "/vendor/lib/hw/gps.omap4.so"
 
 const GpsInterface* (*vendor_get_gps_interface)(struct gps_device_t* dev);
 const void* (*vendor_get_extension)(const char* name);

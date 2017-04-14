@@ -1,3 +1,2 @@
 allow efs_file rootfs:filesystem associate;
 allow cache_file rootfs:filesystem associate;
-allow asec_apk_file rootfs:filesystem associate;

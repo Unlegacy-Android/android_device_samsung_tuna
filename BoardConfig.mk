@@ -101,7 +101,6 @@ BOARD_SEPOLICY_DIRS += \
 BOARD_SEPOLICY_UNION += \
 	genfs_contexts \
 	file_contexts \
-	device.te \
 	dumpdcc.te \
 	pvrsrvinit.te \
 	init.te \

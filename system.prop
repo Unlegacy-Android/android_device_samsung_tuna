@@ -9,25 +9,12 @@ rild.libpath=/system/lib/libsecril-shim.so
 
 ro.opengles.version=131072
 ro.sf.lcd_density=320
-ro.hwui.disable_scissor_opt=true
-
-# GPU producer to CPU consumer not supported
-ro.bq.gpu_to_cpu_unsupported=1
-
-# We don't support the new camera API.
-camera2.portability.force_api=1
 
 # WiFi Interface
 wifi.interface=wlan0
 
 # Enable AAC 5.1 output
 media.aac_51_output_enabled=1
-
-# Avoids retrying for an EGL config w/o EGL_SWAP_BEHAVIOR_PRESERVED
-debug.hwui.render_dirty_regions=false
-
-# We don't support eglSwapBuffersWithDamageKHR; this avoids some unnecessary code.
-debug.hwui.swap_with_damage=false
 
 # Disable VFR support for encoders
 debug.vfr.enable=0

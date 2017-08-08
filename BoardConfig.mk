@@ -28,7 +28,7 @@ TARGET_BOARD_INFO_FILE := $(DEVICE_FOLDER)/board-info.txt
 TARGET_BOOTLOADER_BOARD_NAME := tuna
 
 # We're now a unified build, but this wasn't always the case.
-TARGET_OTA_ASSERT_DEVICE := tuna,,maguro,toro,toroplus
+TARGET_OTA_ASSERT_DEVICE := tuna,maguro,toro,toroplus
 
 # Kernel
 BOARD_KERNEL_BASE := 0x80000000

@@ -21,6 +21,11 @@ on post-fs-data
 
     setprop vold.post_fs_data_done 1
 
+    # Remove symlinks to avoid issues with migrate after nandroid restores
+    # Will be recreated at end of boot
+    # Normal path
+    rm /data/data/com.android.providers.telephony/databases
+
     # LTE
     chown radio system /sys/devices/tuna_otg/usb_sel
     chown radio system /sys/devices/tuna_otg/uart_sel
@@ -213,6 +218,10 @@ service tuna_recovery /system/bin/install-recovery.sh
     seclabel u:r:install_recovery:s0
     disabled
     oneshot
+
+on property:dev.bootcomplete=1
+    # Symlink directories to access telephony.db required by RIL
+    symlink /data/user_de/0/com.android.providers.telephony/databases /data/data/com.android.providers.telephony/databases
 
 # Allow writing to the kernel trace log. Enabling tracing still requires root.
 on property:ro.debuggable=1

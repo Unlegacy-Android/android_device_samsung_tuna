@@ -28,3 +28,6 @@ PRODUCT_DEVICE       := tuna
 PRODUCT_BRAND        := Google
 PRODUCT_MODEL        := Galaxy Nexus
 PRODUCT_MANUFACTURER := Samsung
+
+PRODUCT_PACKAGES += \
+    Stk

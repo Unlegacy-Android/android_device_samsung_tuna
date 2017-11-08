@@ -38,7 +38,10 @@ BOARD_KERNEL_BASE := 0x80000000
 BOARD_KERNEL_CMDLINE := androidboot.hardware=$(TARGET_BOOTLOADER_BOARD_NAME)
 TARGET_KERNEL_CONFIG := tuna_defconfig
 TARGET_KERNEL_SOURCE := kernel/ti/omap4
-TARGET_KERNEL_CUSTOM_TOOLCHAIN := arm-eabi-4.7
+
+# Use GCC 4.7 for the kernel - any newer version can potentionally bork the mmc quirk patching
+KERNEL_TOOLCHAIN := "$(ANDROID_BUILD_TOP)/prebuilts/gcc/$(strip $(HOST_OS))-x86/arm/arm-eabi-4.7/bin"
+KERNEL_TOOLCHAIN_PREFIX := arm-eabi-
 
 TI_CAMERAHAL_USES_LEGACY_DOMX_DCC := true
 TI_CAMERAHAL_INTERFACE := OMX

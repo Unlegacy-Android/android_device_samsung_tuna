@@ -50,8 +50,8 @@ move_toro_files() {
     mv /system/vendor/toro/build.prop /system/vendor/build.prop
 
     mv /system/etc/wifi/bcmdhd.toro.cal /system/etc/wifi/bcmdhd.cal
-    mv /system/vendor/toro/lib/libims.so /system/vendor/lib/libims.so
-    mv /system/vendor/toro/lib/libims_jni.so /system/vendor/lib/libims_jni.so
+#    mv /system/vendor/toro/lib/libims.so /system/vendor/lib/libims.so
+#    mv /system/vendor/toro/lib/libims_jni.so /system/vendor/lib/libims_jni.so
     mv /system/vendor/toro/lib/libsec-ril_lte.so /system/vendor/lib/libsec-ril.so
     mv /system/vendor/toro/etc/apns-conf.xml /system/etc/apns-conf.xml
 

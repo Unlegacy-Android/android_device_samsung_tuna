@@ -40,10 +40,6 @@ PRODUCT_COPY_FILES += \
 	$(DEVICE_FOLDER)/variants/toro.prop:system/vendor/toro/build.prop \
 	$(DEVICE_FOLDER)/variants/toroplus.prop:system/vendor/toroplus/build.prop
 
-#toro apns
-PRODUCT_COPY_FILES += \
-	$(DEVICE_FOLDER)/prebuilt/etc/apns-conf.xml:system/vendor/toro/etc/apns-conf.xml
-
 PRODUCT_AAPT_CONFIG := normal
 PRODUCT_AAPT_PREF_CONFIG := xhdpi
 

@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<carrier_config_list>
+    <!-- Overlays for toro -->
+    <carrier_config mcc="204" mnc="04" >
+        <boolean name="show_apn_setting_cdma_bool" value="true" />
+        <boolean name="allow_adding_apns_bool" value="true" />
+        <string-array name="read_only_apn_fields_string_array" num="3">
+            <item value="mcc" />
+            <item value="mnc" />
+            <item value="carrier_enabled" />
+        </string-array>
+    </carrier_config>
+    <carrier_config mcc="304" mnc="004" >
+        <boolean name="show_apn_setting_cdma_bool" value="true" />
+        <boolean name="allow_adding_apns_bool" value="true" />
+        <string-array name="read_only_apn_fields_string_array" num="3">
+            <item value="mcc" />
+            <item value="mnc" />
+            <item value="carrier_enabled" />
+        </string-array>
+    </carrier_config>
+    <carrier_config mcc="311" mnc="480" >
+        <boolean name="show_apn_setting_cdma_bool" value="true" />
+        <boolean name="allow_adding_apns_bool" value="true" />
+        <string-array name="read_only_apn_fields_string_array" num="3">
+            <item value="mcc" />
+            <item value="mnc" />
+            <item value="carrier_enabled" />
+        </string-array>
+    </carrier_config>
+    <!-- Overlays for toroplus -->
+    <carrier_config mcc="310" mnc="120" >
+        <boolean name="show_apn_setting_cdma_bool" value="true" />
+        <boolean name="allow_adding_apns_bool" value="true" />
+    </carrier_config>
+    <carrier_config mcc="311" mnc="490" >
+        <boolean name="show_apn_setting_cdma_bool" value="true" />
+        <boolean name="allow_adding_apns_bool" value="true" />
+    </carrier_config>
+    <carrier_config mcc="312" mnc="530" >
+        <boolean name="show_apn_setting_cdma_bool" value="true" />
+        <boolean name="allow_adding_apns_bool" value="true" />
+    </carrier_config>
+</carrier_config_list>

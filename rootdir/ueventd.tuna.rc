@@ -1,8 +1,6 @@
 #for DSSCOMP
 /dev/dsscomp              0660   system     system
-/dev/tiler                0666   system     system
-/dev/dmm                  0777   system     system
-/dev/ion                  0777   system     system
+/dev/ion                  0666   system     system
 
 #for SYSLINK
 /dev/rpmsg-omx0           0660   drmrpc    drmrpc
@@ -11,7 +9,9 @@
 /dev/tf_driver            0660   drmrpc    drmrpc
 /dev/tf_ctrl              0660   drmrpc    drmrpc
 
+# PVR
 /dev/pvrsrvkm             0666   system     system
+/dev/pvr_sync             0666   system     system
 
 #for Sensors
 /dev/mpu                  0660   system     system

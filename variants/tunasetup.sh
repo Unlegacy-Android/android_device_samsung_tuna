@@ -78,7 +78,7 @@ move_toroplus_files() {
 
 
 # Remount system rw to allow these changes.
-mount -o remount,rw /system
+mount -o rw,remount /system
 
 variant=""
 cmdline=$(cat /proc/cmdline)
@@ -107,5 +107,5 @@ else
 fi
 
 # Now that we've finished our job, remount system ro and reboot
-mount -o remount,ro /system
+mount -o ro,remount /system
 reboot

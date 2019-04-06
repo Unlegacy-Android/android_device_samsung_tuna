@@ -26,8 +26,6 @@ ifneq ($(filter tuna maguro toro toroplus,$(TARGET_DEVICE)),)
 
 include $(call all-makefiles-under,$(LOCAL_PATH))
 
-endif
-
 ifeq ($(BOARD_CREATE_TUNA_HDCP_KEYS_SYMLINK), true)
 include $(CLEAR_VARS)
 
@@ -49,5 +47,7 @@ $(LOCAL_BUILT_MODULE):
 	$(hide) rm -rf $(SYMLINK)
 	$(hide) ln -sf $(HDCP_KEYS_FILE) $(SYMLINK)
 	$(hide) touch $@
+
+endif
 
 endif
